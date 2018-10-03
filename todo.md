@@ -1,0 +1,1 @@
+* load components like `CalendarComponent` asynchronously

@@ -1,0 +1,7 @@
+<section>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <input type="email" placeholder="Your email" formControlName="email">
+    <input type="password" placeholder="Your password" formControlName="password">
+    <button type="submit" mat-raised-button [disabled]="loginForm.invalid">Submit</button>
+  </form>
+</section>

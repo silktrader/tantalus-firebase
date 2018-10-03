@@ -3,7 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+    apiKey: 'AIzaSyClUFR3UvSsFjbvrkc4-icgkO--xYdsbsI',
+    authDomain: 'tantalus-x.firebaseapp.com',
+    databaseURL: 'https://tantalus-x.firebaseio.com',
+    projectId: 'tantalus-x',
+    storageBucket: 'tantalus-x.appspot.com',
+    messagingSenderId: '522968784038'
+  }
 };
 
 /*
