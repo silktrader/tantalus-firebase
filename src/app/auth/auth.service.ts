@@ -1,32 +1,23 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable, Subject, BehaviorSubject } from "rxjs";
+import { Observable, of, Subject, BehaviorSubject } from "rxjs";
 
 import { Router } from '@angular/router';
+
+interface User {
+  uid: string;
+  email: string;
+  photoURL?: string;
+  displayName?: string;
+  favoriteColor?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  isLoggedIn: boolean = false;
-
-  constructor(private afAuth: AngularFireAuth, private router: Router) { }
-
-  init() {
-    console.log("init");
-    this.afAuth.authState.subscribe(user => {
-      if (user) {
-        this.isLoggedIn = true;
-        this.router.navigate(["/calendar"]);
-        console.log("Logged in");
-      } else {
-        this.isLoggedIn = false;
-        this.router.navigate(["/login"]);
-        console.log("Logged out");
-      }
-    });
-  }
+  constructor(public afAuth: AngularFireAuth, private router: Router) { }
 
   login(email: string, password: string) {
     this.afAuth.auth
@@ -36,7 +27,13 @@ export class AuthService {
       });
   }
 
-  logout() {
+  signout() {
+    console.log("Logging out …");
     this.afAuth.auth.signOut();
+  }
+
+  get isLoggedIn(): boolean {
+    //console.log("User check: is " + (this.user == null ? "null" : this.user.uid));
+    return true;
   }
 }

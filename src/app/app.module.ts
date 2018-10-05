@@ -12,12 +12,22 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MaterialModule } from './material/material.module';
+import { FoodsComponent } from './foods/foods.component';
+import { SignoutComponent } from './auth/signout/signout.component';
+import { HeaderComponent } from './header/header.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { DiaryComponent } from './diary/diary.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    CalendarComponent
+    CalendarComponent,
+    FoodsComponent,
+    SignoutComponent,
+    HeaderComponent,
+    NavigationComponent,
+    DiaryComponent
   ],
   imports: [
     BrowserModule,
