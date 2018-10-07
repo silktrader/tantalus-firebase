@@ -1,0 +1,46 @@
+mat-card {
+    margin-bottom: 30px;    
+}
+
+mat-card-content {
+    display: flex;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+mat-card.label > mat-card-content {
+    flex-direction: column;
+}
+
+mat-card.label > mat-card-content > mat-form-field {
+    flex-shrink: 1;
+    flex-grow: 1;
+    flex-basis: auto;  
+}
+
+mat-card.macronutrients > mat-card-content {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+}
+
+mat-form-field {
+
+    padding-top: 20px;
+}
+
+/* nasty hack to prevent angular material from setting inputs to 180px width */
+::ng-deep div.mat-form-field-infix {
+    width: 30px;
+}
+
+mat-card.macronutrients > mat-card-content > mat-form-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    padding-right: 20px;
+}
+
+mat-card.macronutrients > mat-card-content :last-child {
+    padding-right: 0px;
+}

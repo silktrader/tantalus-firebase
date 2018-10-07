@@ -17,6 +17,7 @@ import { SignoutComponent } from './auth/signout/signout.component';
 import { HeaderComponent } from './header/header.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { DiaryComponent } from './diary/diary.component';
+import { AddFoodComponent } from './foods/add-food/add-food.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { DiaryComponent } from './diary/diary.component';
     SignoutComponent,
     HeaderComponent,
     NavigationComponent,
-    DiaryComponent
+    DiaryComponent,
+    AddFoodComponent
   ],
   imports: [
     BrowserModule,
