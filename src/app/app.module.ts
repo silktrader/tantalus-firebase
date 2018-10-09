@@ -20,28 +20,28 @@ import { DiaryComponent } from './diary/diary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    CalendarComponent,
-    FoodsComponent,
-    SignoutComponent,
-    HeaderComponent,
-    NavigationComponent,
-    DiaryComponent,
-    AddFoodComponent
-  ],
-  imports: [
-    BrowserModule,
-    RoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    CoreModule,
-    BrowserAnimationsModule,
-    MaterialModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        CalendarComponent,
+        FoodsComponent,
+        SignoutComponent,
+        HeaderComponent,
+        NavigationComponent,
+        DiaryComponent,
+        AddFoodComponent
+    ],
+    imports: [
+        BrowserModule,
+        RoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AngularFireModule.initializeApp(environment.firebase),
+        CoreModule,
+        BrowserAnimationsModule,
+        MaterialModule,
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

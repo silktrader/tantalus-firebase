@@ -1,4 +1,4 @@
-<section class="container">
+<form [formGroup]="addFoodForm" (ngSubmit)="onSubmit()" class="container">
 
   <mat-card class="label">
     <mat-card-header>
@@ -8,13 +8,13 @@
     <mat-card-content>
       <mat-form-field appearance="fill">
         <mat-label>Name</mat-label>
-        <input type="text" matInput placeholder="ex. Eggs, Whole">
+        <input type="text" matInput placeholder="ex. Eggs, Whole" formControlName="name">
         <mat-hint>Enter the food's name</mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>Brand</mat-label>
-        <input type="text" matInput placeholder="ex. Knorr">
+        <input type="text" matInput placeholder="ex. Knorr" formControlName="brand">
         <mat-hint>Leave empty when irrelevant</mat-hint>
       </mat-form-field>
     </mat-card-content>
@@ -28,22 +28,25 @@
     <mat-card-content>
       <mat-form-field id="proteins" appearance="fill">
         <mat-label>Proteins</mat-label>
-        <input type="number" matInput placeholder="ex. 12.25" step="1" min="0" max="99">
+        <input type="number" matInput placeholder="ex. 12.25" step="1" min="0" max="99" formControlName="proteins">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="
+          fill">
         <mat-label>Carbs</mat-label>
-        <input type="number" matInput placeholder="ex. 20" step="1" min="0" max="99">
+        <input type="number" matInput placeholder="ex. 20" step="1" min="0" max="99" formControlName="carbs">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>Fats</mat-label>
-        <input type="number" matInput placeholder="ex. 8.8" step="1" min="0" max="99">
+        <input type="number" matInput placeholder="ex. 8.8" step="1" min="0" max="99" formControlName="proteins">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
     </mat-card-content>
   </mat-card>
 
-</section>
+  <button mat-raised-button type="submit">Save New Food</button>
+
+</form>

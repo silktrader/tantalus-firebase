@@ -1,6 +1,6 @@
 import { FoodData } from "../foods.service";
 
-export class Food {
+export class Food implements FoodData {
 
     name: string;
     proteins: number = 0;

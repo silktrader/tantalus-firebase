@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
+import { FoodsService } from '../../foods.service';
 
 @Component({
   selector: 'app-add-food',
@@ -7,9 +9,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddFoodComponent implements OnInit {
 
-  constructor() { }
+  addFoodForm = new FormGroup({
+    name: new FormControl(''),
+    brand: new FormControl(''),
+    proteins: new FormControl(''),
+    carbs: new FormControl(''),
+    fats: new FormControl('')
+  });
+
+  constructor(private foodsService: FoodsService) { }
 
   ngOnInit() {
+  }
+
+  onSubmit() {
+    this.foodsService.AddFood(this.addFoodForm.value);
   }
 
 }
