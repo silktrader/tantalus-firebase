@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
+import { Food } from '../food';
 
 @Component({
   selector: 'app-add-food',
