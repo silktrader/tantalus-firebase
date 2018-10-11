@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
-import { Router } from '@angular/router';
+import { Food } from '../food';
 
 @Component({
   selector: 'app-add-food',
@@ -19,13 +19,21 @@ export class AddFoodComponent implements OnInit {
     fats: new FormControl('')
   });
 
-  constructor(private foodsService: FoodsService, private location: Location, private router: Router) { }
+  constructor(private foodsService: FoodsService, private location: Location) { }
 
   ngOnInit() {
   }
 
   onSubmit() {
-    this.foodsService.AddFood(this.addFoodForm.value);
+    const form = this.addFoodForm.value;
+    this.foodsService.AddFood({
+      name: form.name,
+      brand: form.brand,
+      proteins: +form.proteins || 0,
+      carbs: +form.carbs || 0,
+      fats: +form.fats || 0,
+    });
+    this.location.back();
   }
 
   onDiscard() {
