@@ -3,17 +3,26 @@ import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Food } from './food';
 import { FoodsService } from '../foods.service';
 import { Observable, Subscription } from 'rxjs';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-foods',
   templateUrl: './foods.component.html',
-  styleUrls: ['./foods.component.css']
+  styleUrls: ['./foods.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('expanded', style({ height: '*', marginTop: '10px', marginBottom: '10px' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class FoodsComponent implements OnInit, OnDestroy {
 
   displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
   dataSource = new MatTableDataSource<Food>();
   private dataSubscription: Subscription;
+  expandedElement: Food;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -37,5 +46,9 @@ export class FoodsComponent implements OnInit, OnDestroy {
 
   doFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  toggleExpandedDetails(element: Food): void {
+    this.expandedElement = this.expandedElement == element ? null : element;
   }
 }

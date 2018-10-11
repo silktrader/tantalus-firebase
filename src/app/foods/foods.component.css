@@ -1,0 +1,21 @@
+mat-row.detail-row {
+    min-height: 0;
+}
+
+.expanded-row {
+    border-bottom-width: 0px;
+}
+
+.expandable {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+mat-row:not(.expanded-row):not(.detail-row):hover {
+  background: #f5f5f5;
+}
+
+mat-row:not(.detail-row):not(.expanded-row):active {
+  background: #efefef;
+}
