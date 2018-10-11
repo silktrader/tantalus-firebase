@@ -22,7 +22,6 @@ export class FoodsService {
 
   public AddFood(food: Food) {
     this.af.collection('foods').add(food);
-    console.log("added food " + food.name);
   }
 
 }

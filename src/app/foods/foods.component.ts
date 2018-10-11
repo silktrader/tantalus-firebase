@@ -1,38 +1,41 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, MatButtonModule } from '@angular/material';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Food } from './food';
 import { FoodsService } from '../foods.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-foods',
   templateUrl: './foods.component.html',
   styleUrls: ['./foods.component.css']
 })
-export class FoodsComponent implements OnInit, AfterViewInit {
+export class FoodsComponent implements OnInit, OnDestroy {
 
   displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
   dataSource = new MatTableDataSource<Food>();
+  private dataSubscription: Subscription;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private foodsService: FoodsService) { }
 
+  // might have to use AfterViewInit
   ngOnInit(): void {
-
-  }
-
-  ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.foodsService.foods.subscribe(
-      (foods) => { this.dataSource.data = foods },
-      (error) => console.log(error));
+    this.dataSubscription = this.foodsService.foods.subscribe(
+      foods => {
+        this.dataSource.data = foods
+      },
+      error => console.log(error));
+  }
+
+  ngOnDestroy(): void {
+    this.dataSubscription.unsubscribe();
   }
 
   doFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-
 }
