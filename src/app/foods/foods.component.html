@@ -35,7 +35,7 @@
       <mat-cell *matCellDef="let element">
         <div class="expandable" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           <button mat-raised-button type="button" color="primary">Edit</button>
-          <button mat-raised-button type="button" color="primary">Delete</button>
+          <button mat-raised-button type="button" color="primary" (click)="delete(element)">Delete</button>
         </div>
       </mat-cell>
     </ng-container>
@@ -43,7 +43,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
       (click)="toggleExpandedDetails(element)"></mat-row>
-    <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></mat-row>
+    <mat-row *matRowDef="let row; columns: ['expandedDetail']" [class.focus-row]="expandedElement === row" class="detail-row"></mat-row>
   </mat-table>
 
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="mat-elevation-z8">

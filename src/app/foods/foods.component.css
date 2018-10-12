@@ -1,7 +1,13 @@
 mat-row.detail-row {
     min-height: 0;
+    border-bottom-width: 0px;
 }
 
+mat-row.focus-row {
+    border-bottom-width: 1px;
+}
+
+/* hide the border between the expanded row and the detail one */
 .expanded-row {
     border-bottom-width: 0px;
 }
@@ -9,7 +15,7 @@ mat-row.detail-row {
 .expandable {
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-evenly;    
 }
 
 mat-row:not(.expanded-row):not(.detail-row):hover {

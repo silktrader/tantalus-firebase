@@ -7,6 +7,7 @@ export class Food implements IFood {
     }
 
     constructor(
+        public readonly id: string,
         public readonly name: string,
         public readonly brand: string,
         public readonly proteins: number,

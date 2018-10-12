@@ -6,6 +6,7 @@ service cloud.firestore {
     
     match /foods/{food} {
     	allow create: if isAuthenticated() && meetsFoodSchema();
+      allow delete: if isAuthenticated();
     }    
   
     function isAuthenticated() {

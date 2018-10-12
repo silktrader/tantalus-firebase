@@ -51,4 +51,8 @@ export class FoodsComponent implements OnInit, OnDestroy {
   toggleExpandedDetails(element: Food): void {
     this.expandedElement = this.expandedElement == element ? null : element;
   }
+
+  delete(food: Food): void {
+    this.foodsService.DeleteFood(food);
+  }
 }

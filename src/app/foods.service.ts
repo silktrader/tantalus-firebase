@@ -12,15 +12,21 @@ export class FoodsService {
   public foods: Observable<Food[]>;
 
   constructor(private af: AngularFirestore) {
-    this.foods = af.collection<IFood>('foods').valueChanges().pipe(map(data => data.map(foodData => this.createFood(foodData))));
+    this.foods = af.collection<IFood>('foods').snapshotChanges().pipe(map(data => data.map(foodData =>
+      this.createFood(foodData.payload.doc.id, foodData.payload.doc.data())
+    )));
   }
 
-  private createFood(data: IFood): Food {
-    return new Food(data.name, data.brand, data.proteins, data.carbs, data.fats);
+  private createFood(id: string, data: IFood): Food {
+    return new Food(id, data.name, data.brand, data.proteins, data.carbs, data.fats);
   }
 
   public AddFood(food: IFood) {
     this.af.collection('foods').add(food);
+  }
+
+  public DeleteFood(food: Food) {
+    this.af.collection('foods').doc(food.id).delete().catch(error => console.log(error));
   }
 }
 
