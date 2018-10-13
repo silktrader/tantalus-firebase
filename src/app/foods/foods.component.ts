@@ -48,8 +48,8 @@ export class FoodsComponent implements OnInit, OnDestroy {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  toggleExpandedDetails(element: Food): void {
-    this.expandedElement = this.expandedElement == element ? null : element;
+  edit(food: Food): void {
+
   }
 
   delete(food: Food): void {

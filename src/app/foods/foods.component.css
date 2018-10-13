@@ -1,27 +1,11 @@
-mat-row.detail-row {
-    min-height: 0;
-    border-bottom-width: 0px;
+mat-row {
+    cursor: pointer;
 }
 
-mat-row.focus-row {
-    border-bottom-width: 1px;
-}
-
-/* hide the border between the expanded row and the detail one */
-.expanded-row {
-    border-bottom-width: 0px;
-}
-
-.expandable {
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;    
-}
-
-mat-row:not(.expanded-row):not(.detail-row):hover {
+mat-row:hover {
   background: #f5f5f5;
 }
 
-mat-row:not(.detail-row):not(.expanded-row):active {
+mat-row:active {
   background: #efefef;
 }
