@@ -6,12 +6,14 @@ import { AuthGuard } from '../auth/auth.guard';
 import { FoodsComponent } from '../foods/foods.component';
 import { DiaryComponent } from '../diary/diary.component';
 import { AddFoodComponent } from '../foods/add-food/add-food.component';
+import { EditFoodComponent } from '../foods/edit-food/edit-food.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
   { path: 'foods', component: FoodsComponent, canActivate: [AuthGuard] },
   { path: 'addfood', component: AddFoodComponent, canActivate: [AuthGuard] },
+  { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/foods', pathMatch: 'full' },
 ];

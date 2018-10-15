@@ -32,7 +32,7 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let food; columns: displayedColumns;" (click)="editFood(food)" matRipple></mat-row>
+    <mat-row *matRowDef="let food; columns: displayedColumns;" (click)="edit(food)" matRipple></mat-row>
   </mat-table>
 
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="mat-elevation-z8">

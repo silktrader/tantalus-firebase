@@ -4,6 +4,7 @@ import { Food } from './food';
 import { FoodsService } from '../foods.service';
 import { Observable, Subscription } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-foods',
@@ -22,12 +23,11 @@ export class FoodsComponent implements OnInit, OnDestroy {
   displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
   dataSource = new MatTableDataSource<Food>();
   private dataSubscription: Subscription;
-  expandedElement: Food;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private foodsService: FoodsService) { }
+  constructor(private foodsService: FoodsService, private router: Router) { }
 
   // might have to use AfterViewInit
   ngOnInit(): void {
@@ -49,10 +49,10 @@ export class FoodsComponent implements OnInit, OnDestroy {
   }
 
   edit(food: Food): void {
-
+    this.router.navigate(['/food', food.id])
   }
 
   delete(food: Food): void {
-    this.foodsService.DeleteFood(food);
+    this.foodsService.deleteFood(food);
   }
 }

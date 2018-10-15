@@ -18,6 +18,7 @@ import { HeaderComponent } from './header/header.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { DiaryComponent } from './diary/diary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
+import { EditFoodComponent } from './foods/edit-food/edit-food.component';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import { AddFoodComponent } from './foods/add-food/add-food.component';
         HeaderComponent,
         NavigationComponent,
         DiaryComponent,
-        AddFoodComponent
+        AddFoodComponent,
+        EditFoodComponent,
     ],
     imports: [
         BrowserModule,

@@ -21,12 +21,11 @@ export class AddFoodComponent implements OnInit {
 
   constructor(private foodsService: FoodsService, private location: Location) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onSubmit() {
     const form = this.addFoodForm.value;
-    this.foodsService.AddFood({
+    this.foodsService.addFood({
       name: form.name,
       brand: form.brand,
       proteins: +form.proteins || 0,
