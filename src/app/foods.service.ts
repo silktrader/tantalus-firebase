@@ -1,36 +1,41 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { map, } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Food } from './foods/food';
+import * as shortid from 'shortid';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FoodsService {
 
-  public foods: Observable<Food[]>;
+  public readonly foods$: Observable<Food[]>;
 
-  constructor(private af: AngularFirestore) {
-    this.foods = af.collection<IFood>('foods').snapshotChanges().pipe(map(data => data.map(foodData =>
-      this.createFood(foodData.payload.doc.id, foodData.payload.doc.data())
+  constructor(private readonly af: AngularFirestore) {
+    this.foods$ = af.collection<IFood>('foods').snapshotChanges().pipe(map(data => data.map(foodData => {
+      return this.createFood({ ...foodData.payload.doc.data(), id: foodData.payload.doc.id });
+    }
     )));
+    // this.foods$ = af.collection<IFood>('foods').valueChanges().pipe(map(data => data.map(foodData =>
+    //   this.createFood({ ...foodData, id: "asd" })
+    // )));
   }
 
-  private createFood(id: string, data: IFood): Food {
-    return new Food(id, data.name, data.brand, data.proteins, data.carbs, data.fats);
+  private createFood(data: IFood): Food {
+    return new Food(data.id, data.name, data.brand, data.proteins, data.carbs, data.fats);
   }
 
   public getFood(id: string): Observable<Food> {
-    return this.af.doc<IFood>('foods/' + id).valueChanges().pipe(map(data => this.createFood(id, data)));
+    return this.af.doc<IFood>(`foods/${id}`).valueChanges().pipe(map(data => this.createFood({ ...data, id: id })));
   }
 
   public addFood(food: IFood) {
-    this.af.collection('foods').add(food);
+    this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
   public editFood(id: string, food: IFood) {
-    this.af.doc('foods/' + id).set(food);
+    this.af.doc(`foods/${id}`).set(food);
   }
 
   public deleteFood(food: IFood) {

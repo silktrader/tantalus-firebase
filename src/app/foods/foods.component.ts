@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Food } from './food';
 import { FoodsService } from '../foods.service';
@@ -18,26 +18,29 @@ import { Router } from '@angular/router';
     ]),
   ],
 })
-export class FoodsComponent implements OnInit, OnDestroy {
+export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
-  dataSource = new MatTableDataSource<Food>();
+  private dataSource: MatTableDataSource<Food> = new MatTableDataSource<Food>();
   private dataSubscription: Subscription;
+
+  foods$ = this.foodsService.foods$;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private foodsService: FoodsService, private router: Router) { }
+  constructor(private readonly foodsService: FoodsService, private readonly router: Router) { }
 
   // might have to use AfterViewInit
   ngOnInit(): void {
+
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSubscription = this.foods$.subscribe((foods: Food[]) => this.dataSource.data = foods);
+
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.dataSubscription = this.foodsService.foods.subscribe(
-      foods => {
-        this.dataSource.data = foods
-      },
-      error => console.log(error));
   }
 
   ngOnDestroy(): void {
@@ -52,7 +55,13 @@ export class FoodsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/food', food.id])
   }
 
-  delete(food: Food): void {
-    this.foodsService.deleteFood(food);
+  addstuff() {
+    this.foodsService.addFood({
+      name: "TEST",
+      brand: "",
+      proteins: 0,
+      carbs: 0,
+      fats: 0,
+    });
   }
 }

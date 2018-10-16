@@ -35,7 +35,7 @@
     <mat-row *matRowDef="let food; columns: displayedColumns;" (click)="edit(food)" matRipple></mat-row>
   </mat-table>
 
-  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="mat-elevation-z8">
+  <mat-paginator [pageSize]="25" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="mat-elevation-z8">
   </mat-paginator>
 </section>
 
@@ -43,4 +43,5 @@
   <a mat-fab routerLink="/addfood" routerLinkActive="active">
     <mat-icon>add</mat-icon>
   </a>
+  <button mat-fat (click)="addstuff()">ADD</button>
 </section>

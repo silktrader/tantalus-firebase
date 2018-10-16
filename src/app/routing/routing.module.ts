@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'addfood', component: AddFoodComponent, canActivate: [AuthGuard] },
   { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
   { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: '/foods', pathMatch: 'full' },
+  // { path: '', redirectTo: '/foods', pathMatch: 'full' },
 ];
 
 @NgModule({
