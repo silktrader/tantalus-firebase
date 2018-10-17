@@ -63,8 +63,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
 
   onDelete() {
 
-    this.foodsService.deleteFood(this.food);
-    this.router.navigate(['foods']);
+    this.foodsService.deleteFood(this.food).then(() => this.router.navigate(['foods']));
   }
 
   onDiscard() {
