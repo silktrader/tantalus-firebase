@@ -13,8 +13,11 @@ import {
   MatSortModule,
   MatPaginatorModule,
   MatSnackBarModule,
-  MatCardModule
+  MatCardModule,
+  MatExpansionModule,
+  MatTabsModule
 } from '@angular/material';
+import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
 
 @NgModule({
   imports: [
@@ -31,7 +34,10 @@ import {
     MatSortModule,
     MatPaginatorModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
+    MatExpansionModule,
+    EcoFabSpeedDialModule,
+    MatTabsModule
   ],
   exports: [
     MatButtonModule,
@@ -46,7 +52,10 @@ import {
     MatSortModule,
     MatPaginatorModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
+    MatExpansionModule,
+    EcoFabSpeedDialModule,
+    MatTabsModule
   ],
   declarations: []
 })

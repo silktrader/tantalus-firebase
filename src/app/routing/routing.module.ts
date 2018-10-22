@@ -4,9 +4,11 @@ import { CalendarComponent } from '../calendar/calendar.component';
 import { LoginComponent } from '../auth/login/login.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { FoodsComponent } from '../foods/foods.component';
-import { DiaryComponent } from '../diary/diary.component';
 import { AddFoodComponent } from '../foods/add-food/add-food.component';
 import { EditFoodComponent } from '../foods/edit-food/edit-food.component';
+import { DiarySummaryComponent } from '../components/diary/diary-summary/diary-summary.component';
+import { AddPortionComponent } from '../components/diary/add-portion/add-portion.component';
+import { DiaryOutletComponent } from '../components/diary/diary-outlet/diary-outlet.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -14,8 +16,17 @@ const routes: Routes = [
   { path: 'foods', component: FoodsComponent, canActivate: [AuthGuard] },
   { path: 'addfood', component: AddFoodComponent, canActivate: [AuthGuard] },
   { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
-  { path: 'diary', component: DiaryComponent, canActivate: [AuthGuard] },
-  // { path: '', redirectTo: '/foods', pathMatch: 'full' },
+  {
+    path: 'diary/:day-:month-:year', component: DiaryOutletComponent, canActivate: [AuthGuard],
+    children: [
+      //{ path: 'summary', component: DiarySummaryComponent },
+      { path: '', component: DiarySummaryComponent },
+      { path: 'add-portion', component: AddPortionComponent }
+    ]
+  },
+
+
+  { path: '', redirectTo: '/foods', pathMatch: 'full' },
 ];
 
 @NgModule({

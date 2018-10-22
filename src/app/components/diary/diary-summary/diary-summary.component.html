@@ -1,0 +1,52 @@
+<mat-accordion>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      This is the expansion 1 title
+    </mat-expansion-panel-header>
+
+    This the expansion 1 content
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      This is the expansion 2 title
+    </mat-expansion-panel-header>
+
+    This the expansion 2 content
+
+  </mat-expansion-panel>
+
+</mat-accordion>
+
+
+<div class="container-fab-demo">
+
+  <mat-card>
+    <mat-card-title>Click me</mat-card-title>
+    <eco-fab-speed-dial [(open)]="open" direction="up" animationMode="fling">
+
+      <eco-fab-speed-dial-trigger [spin]="spin">
+        <button mat-fab (click)="doAction('trigger')">
+          <mat-icon class="spin180">add</mat-icon>
+        </button>
+      </eco-fab-speed-dial-trigger>
+
+      <eco-fab-speed-dial-actions>
+        <button mat-mini-fab (click)="addMeal()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-mini-fab (click)="doAction('action2')">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-mini-fab (click)="doAction('action3')">
+          <mat-icon>home</mat-icon>
+        </button>
+      </eco-fab-speed-dial-actions>
+
+    </eco-fab-speed-dial>
+  </mat-card>
+
+
+</div>

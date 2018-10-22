@@ -16,9 +16,11 @@ import { FoodsComponent } from './foods/foods.component';
 import { SignoutComponent } from './auth/signout/signout.component';
 import { HeaderComponent } from './header/header.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { DiaryComponent } from './diary/diary.component';
+import { DiarySummaryComponent } from './components/diary/diary-summary/diary-summary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
+import { AddPortionComponent } from './components/diary/add-portion/add-portion.component';
+import { DiaryOutletComponent } from './components/diary/diary-outlet/diary-outlet.component';
 
 @NgModule({
     declarations: [
@@ -29,9 +31,11 @@ import { EditFoodComponent } from './foods/edit-food/edit-food.component';
         SignoutComponent,
         HeaderComponent,
         NavigationComponent,
-        DiaryComponent,
+        DiarySummaryComponent,
         AddFoodComponent,
         EditFoodComponent,
+        AddPortionComponent,
+        DiaryOutletComponent,
     ],
     imports: [
         BrowserModule,
