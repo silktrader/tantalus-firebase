@@ -14,7 +14,7 @@ export class FoodsService {
   public readonly foods$: Observable<Food[]>;
 
   constructor(private readonly af: AngularFirestore) {
-    this.foods$ = af.collection<IFood>('foods').snapshotChanges().pipe(
+    this.foods$ = af.collection<FoodData>('foods').snapshotChanges().pipe(
       shareReplay(1),
       map(data => data.map(foodData => this.createFood({ ...foodData.payload.doc.data(), id: foodData.payload.doc.id })
       )));
@@ -23,23 +23,23 @@ export class FoodsService {
     // )));
   }
 
-  private createFood(data: IFood): Food {
+  private createFood(data: FoodData): Food {
     return new Food(data.id, data.name, data.brand, data.proteins, data.carbs, data.fats);
   }
 
   public getFood(id: string): Observable<Food> {
-    return this.af.doc<IFood>(`foods/${id}`).valueChanges().pipe(map(data => this.createFood({ ...data, id: id })));
+    return this.af.doc<FoodData>(`foods/${id}`).valueChanges().pipe(map(data => this.createFood({ ...data, id: id })));
   }
 
-  public addFood(food: IFood): Promise<void> {
+  public addFood(food: FoodData): Promise<void> {
     return this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
-  public editFood(id: string, food: IFood) {
+  public editFood(id: string, food: FoodData) {
     this.af.doc(`foods/${id}`).set(food);
   }
 
-  public deleteFood(food: IFood): Promise<void> {
+  public deleteFood(food: FoodData): Promise<void> {
     return this.af.collection('foods').doc(food.id).delete().catch(error => console.log(error));
   }
 
@@ -47,7 +47,7 @@ export class FoodsService {
     return start.pipe(
       switchMap(startText => {
         const endText = startText + '\uf8ff';
-        return this.af.collection<IFood>('foods', ref => ref
+        return this.af.collection<FoodData>('foods', ref => ref
           .orderBy('name')
           .startAt(startText.toUpperCase())     // must transform to uppercase for both variants to be included
           .endAt(endText)
@@ -60,7 +60,7 @@ export class FoodsService {
   }
 }
 
-export interface IFood {
+export interface FoodData {
   id?: string;
   name: string;
   brand: string;

@@ -16,11 +16,12 @@ import { FoodsComponent } from './foods/foods.component';
 import { SignoutComponent } from './auth/signout/signout.component';
 import { HeaderComponent } from './header/header.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { DiarySummaryComponent } from './components/diary/diary-summary/diary-summary.component';
+import { DiarySummaryComponent } from './diary/diary-summary/diary-summary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
-import { AddPortionComponent } from './components/diary/add-portion/add-portion.component';
-import { DiaryOutletComponent } from './components/diary/diary-outlet/diary-outlet.component';
+import { AddPortionComponent } from './diary/add-portion/add-portion.component';
+import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.component';
+import { AddPortionDialogComponent } from './diary/add-portion-dialog/add-portion-dialog.component';
 
 @NgModule({
     declarations: [
@@ -36,6 +37,7 @@ import { DiaryOutletComponent } from './components/diary/diary-outlet/diary-outl
         EditFoodComponent,
         AddPortionComponent,
         DiaryOutletComponent,
+        AddPortionDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -46,6 +48,9 @@ import { DiaryOutletComponent } from './components/diary/diary-outlet/diary-outl
         CoreModule,
         BrowserAnimationsModule,
         MaterialModule,
+    ],
+    entryComponents: [
+        AddPortionDialogComponent
     ],
     providers: [],
     bootstrap: [AppComponent]

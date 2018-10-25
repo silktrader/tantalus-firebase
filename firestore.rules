@@ -8,7 +8,15 @@ service cloud.firestore {
     	allow create: if isAuthenticated() && meetsFoodSchema();
       allow delete: if isAuthenticated();
       allow update: if isAuthenticated() && meetsFoodSchema();
-    }    
+    }
+
+    match /users/{id}/diary {
+      allow create, delete, update: if isAuthenticatedUser(id);
+    }
+
+    function isAuthenticatedUser(id) {
+      return request.auth.ui == id;
+    }
   
     function isAuthenticated() {
       return request.auth.uid != null;

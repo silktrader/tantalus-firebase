@@ -12,9 +12,7 @@ interface User {
   favoriteColor?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
 
   constructor(public afAuth: AngularFireAuth, private router: Router) { }
@@ -28,12 +26,15 @@ export class AuthService {
   }
 
   signout() {
-    console.log("Logging out …");
     this.afAuth.auth.signOut();
   }
 
   get isLoggedIn(): boolean {
     //console.log("User check: is " + (this.user == null ? "null" : this.user.uid));
     return true;
+  }
+
+  get userID(): string {
+    return this.afAuth.auth.currentUser.uid;
   }
 }

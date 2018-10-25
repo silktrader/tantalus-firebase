@@ -1,20 +1,11 @@
 <mat-accordion>
-
-  <mat-expansion-panel>
+  asd
+  <mat-expansion-panel *ngFor="let portion of portions">
     <mat-expansion-panel-header>
-      This is the expansion 1 title
+      Meal {{portion.food.name}}
     </mat-expansion-panel-header>
 
-    This the expansion 1 content
-
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      This is the expansion 2 title
-    </mat-expansion-panel-header>
-
-    This the expansion 2 content
+    <!-- <div *ngFor="let portion of meal.Portions">{{portion.food.name}} {{portion.quantity}}</div> -->
 
   </mat-expansion-panel>
 
@@ -36,12 +27,6 @@
       <eco-fab-speed-dial-actions>
         <button mat-mini-fab (click)="addMeal()">
           <mat-icon>add</mat-icon>
-        </button>
-        <button mat-mini-fab (click)="doAction('action2')">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-mini-fab (click)="doAction('action3')">
-          <mat-icon>home</mat-icon>
         </button>
       </eco-fab-speed-dial-actions>
 

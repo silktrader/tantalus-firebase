@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DiaryEntry } from 'src/app/models/daily-plan';
 
 @Component({
   selector: 'app-diary-outlet',

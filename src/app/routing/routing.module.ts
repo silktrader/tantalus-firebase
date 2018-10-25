@@ -6,9 +6,9 @@ import { AuthGuard } from '../auth/auth.guard';
 import { FoodsComponent } from '../foods/foods.component';
 import { AddFoodComponent } from '../foods/add-food/add-food.component';
 import { EditFoodComponent } from '../foods/edit-food/edit-food.component';
-import { DiarySummaryComponent } from '../components/diary/diary-summary/diary-summary.component';
-import { AddPortionComponent } from '../components/diary/add-portion/add-portion.component';
-import { DiaryOutletComponent } from '../components/diary/diary-outlet/diary-outlet.component';
+import { DiarySummaryComponent } from '../diary/diary-summary/diary-summary.component';
+import { AddPortionComponent } from '../diary/add-portion/add-portion.component';
+import { DiaryOutletComponent } from '../diary/diary-outlet/diary-outlet.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'addfood', component: AddFoodComponent, canActivate: [AuthGuard] },
   { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
   {
-    path: 'diary/:day-:month-:year', component: DiaryOutletComponent, canActivate: [AuthGuard],
+    path: 'diary/:year/:month/:day', component: DiaryOutletComponent, canActivate: [AuthGuard],
     children: [
       //{ path: 'summary', component: DiarySummaryComponent },
       { path: '', component: DiarySummaryComponent },

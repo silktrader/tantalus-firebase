@@ -1,9 +1,13 @@
-import { IFood } from "../foods.service";
+import { FoodData } from "../foods.service";
 
-export class Food implements IFood {
+export class Food implements FoodData {
 
     get calories(): number {
         return this.proteins * 4 + this.carbs * 4 + this.fats * 9;
+    }
+
+    get approximateCalories(): number {
+        return Math.round(this.calories);
     }
 
     constructor(
@@ -14,5 +18,4 @@ export class Food implements IFood {
         public readonly carbs: number,
         public readonly fats: number
     ) { }
-
 }

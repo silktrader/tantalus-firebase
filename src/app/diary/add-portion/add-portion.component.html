@@ -1,0 +1,43 @@
+<mat-tab-group>
+
+  <mat-tab label="Search">
+    <form>
+      <mat-form-field class="search" appearance="outline">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input type="search" matInput [formControl]="searchBox" autocomplete="off" (keyup)="search($event)">
+        <button matSuffix mat-icon-button>
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </form>
+
+    <section>
+      <div class="search-items" *ngFor="let food of filteredFoods | async" (click)="openPortionDialog(food)">
+        <span class="search-item-name">{{food.name}}</span>
+        <span class="search-item-calories">{{food.approximateCalories}}</span>
+      </div>
+    </section>
+
+    <mat-divider></mat-divider>
+
+    <section *ngIf="selectedPortions?.length > 0">
+      To be added:
+      <div *ngFor="let entry of selectedPortions">
+        {{entry.food.name}} {{entry.quantity}}
+        <button mat-icon-button (click)="deletePortion(entry)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </section>
+
+    <button mat-icon-button (click)="registerPortions()">
+      <mat-icon>add</mat-icon>
+    </button>
+
+
+  </mat-tab>
+
+  <mat-tab label="Recents">Recents</mat-tab>
+  <mat-tab label="Favourites">Favourites</mat-tab>
+</mat-tab-group>
