@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Food } from '../../foods/food';
-import { DiaryEntry } from '../../models/daily-plan';
 import { Meal } from '../../models/meal';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PlannerService, IDiaryEntry, IPortion } from '../planner.service';
+import { PlannerService, IDiaryEntry } from '../planner.service';
+import { PortionData } from '../PortionData';
 import { Observable } from 'rxjs';
+import { FoodData } from 'src/app/FoodData';
+import { Portion } from 'src/app/models/portion';
 
 @Component({
   selector: 'app-diary-summary',
@@ -16,8 +18,8 @@ export class DiarySummaryComponent implements OnInit {
   public open = false;
   public spin = false;
 
-  diary$: Observable<IDiaryEntry>;
-  portions: IPortion[];
+  // private _meals = new Map<Number, Meal>();
+  private _meals: Meal[] = [];
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService) { }
 
@@ -27,8 +29,35 @@ export class DiarySummaryComponent implements OnInit {
       this.plannerService.initialise(date);
     });
 
-    //this.diary$ = this.plannerService.portions;
-    this.plannerService.portions.subscribe(portions => this.portions = portions);
+    this.plannerService.portions.subscribe(mergedData => this.createMeals(mergedData.portions, mergedData.foods));
+  }
+
+  private createMeals(portions: PortionData[], foods: FoodData[]): void {
+
+    const meals: Meal[] = [];
+
+    for (let i = 0; i < portions.length; i++) {
+
+      const { id, quantity, mealID } = portions[i];
+
+      if (meals[mealID] === undefined)
+        meals[mealID] = new Meal();
+
+      meals[mealID].addPortion(new Portion(id, quantity, new Food(foods[i]), mealID));
+    }
+
+    // filter out undefined meals when gaps are present, tk sort them later
+    this._meals = [];
+    for (const meal of meals) {
+      if (meal === undefined)
+        continue;
+      this._meals.push(meal);
+    }
+
+  }
+
+  get meals(): ReadonlyArray<Meal> {
+    return this._meals;
   }
 
   public doAction(event: any) {
@@ -36,15 +65,6 @@ export class DiarySummaryComponent implements OnInit {
   }
 
   public addMeal() {
-    // if (this.dailyPlan == undefined)
-    //   this.dailyPlan = new DailyPlan();
-
-    //this.dailyPlan.addPortion(1, new Meal());
     this.router.navigate(['add-portion'], { relativeTo: this.route });
   }
-
-  private createJournalEntry() {
-
-  }
-
 }

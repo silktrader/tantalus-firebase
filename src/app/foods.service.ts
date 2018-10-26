@@ -5,6 +5,7 @@ import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 
 import { Food } from './foods/food';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
+import { FoodData } from './FoodData';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class FoodsService {
   }
 
   private createFood(data: FoodData): Food {
-    return new Food(data.id, data.name, data.brand, data.proteins, data.carbs, data.fats);
+    return new Food(data);
   }
 
   public getFood(id: string): Observable<Food> {
@@ -58,13 +59,4 @@ export class FoodsService {
       distinctUntilChanged(),
       map(data => data.map(x => this.createFood({ ...x.payload.doc.data(), id: x.payload.doc.id }))));
   }
-}
-
-export interface FoodData {
-  id?: string;
-  name: string;
-  brand: string;
-  proteins: number;
-  carbs: number;
-  fats: number;
 }

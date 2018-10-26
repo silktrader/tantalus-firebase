@@ -1,6 +1,7 @@
 import { Meal } from "./meal";
 import { Portion } from "./portion";
-import { IDiaryEntry, IPortion } from "../diary/planner.service";
+import { IDiaryEntry } from "../diary/planner.service";
+import { PortionData } from "../diary/PortionData";
 
 export class DiaryEntry {
 

@@ -9,14 +9,14 @@ import { firestore } from 'firebase';
 import * as shortid from 'shortid';
 import { startWith, tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { FoodData } from '../foods.service';
-import { Food } from '../foods/food';
+import { FoodData } from '../FoodData';
+import { PortionData } from './PortionData';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
 
-  private portions$: Observable<IPortion[]>;
-  private diaryDoc: AngularFirestoreDocument<any>;
+  private portions$: Observable<{ portions: PortionData[], foods: FoodData[] }>;
+  private entryReference: AngularFirestoreDocument<any>;
 
   constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private route: ActivatedRoute) {
 
@@ -27,14 +27,12 @@ export class PlannerService {
   }
 
   public initialise(date: Date): void {
-    console.log('initialised');
-    this.diaryDoc = this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${this.parseDate(date)}`);
-    this.portions$ = this.diaryDoc.valueChanges().pipe(
+    this.entryReference = this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${this.parseDate(date)}`);
+    this.portions$ = this.entryReference.valueChanges().pipe(
       startWith({ comments: '', portions: [] }),
-      tap(x => console.log(x)),
       switchMap(data => {
 
-        const portions: IPortion[] = data.portions;
+        const portions: PortionData[] = data.portions;
 
         // tk can improve by caching foods data in case of duplicates to avoid multiple firestore reads
         const foodData$: Observable<FoodData>[] = portions.map(portion => this.af.doc<FoodData>(`foods/${portion.foodID}`).valueChanges());
@@ -42,40 +40,28 @@ export class PlannerService {
         // tk handle missing food with empty observable?
 
         return combineLatest(...foodData$, (...foods) => {
-          portions.forEach((portion, index) => {
-            const { id, name, brand, proteins, carbs, fats } = foods[index]
-            portion.food = new Food(id, name, brand, proteins, carbs, fats);
-          });
-          return portions;
+          return { portions: portions, foods: foods };
         });
       })
     );
 
   }
 
-  public addPortion(portion: IPortion) {
+  public addPortion(portion: PortionData) {
     const portionData = { id: shortid.generate(), ...portion };
 
     // update the document otherwise
-    this.diaryDoc.set({ portions: firestore.FieldValue.arrayUnion(portionData) }, { merge: true });
+    this.entryReference.set({ portions: firestore.FieldValue.arrayUnion(portionData) }, { merge: true });
   }
 
-  public get portions(): Observable<IPortion[]> {
-    return this.portions$
+  public get portions(): Observable<{ portions: PortionData[], foods: FoodData[] }> {
+    return this.portions$;
   }
 }
 
 export interface IDiaryEntry {
   comments?: string;
-  portions: IPortion[];
-}
-
-export interface IPortion {
-  id?: string;
-  mealID: number;
-  foodID: string;
-  food?: Food;
-  quantity: number;
+  portions: PortionData[];
 }
 
 export interface DiaryEntryData {

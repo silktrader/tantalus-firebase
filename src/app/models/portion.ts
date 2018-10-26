@@ -1,7 +1,7 @@
-import { Food } from "../foods/food";
-import { IPortion } from "../diary/planner.service";
+import { Food } from '../foods/food';
+import { PortionData } from '../diary/PortionData';
 
-export class Portion implements IPortion {
+export class Portion implements PortionData {
 
     constructor(public id: string, public quantity: number, public food: Food, public mealID: number) {
 
@@ -10,12 +10,4 @@ export class Portion implements IPortion {
     get foodID() {
         return this.food.id;
     }
-
-    // id: string;
-
-    // public quantity: number;
-    // public food: Food;
-
-    // public foodID: string;
-    // public mealID: number;
 }

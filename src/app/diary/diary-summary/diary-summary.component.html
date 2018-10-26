@@ -1,11 +1,12 @@
-<mat-accordion>
-  asd
-  <mat-expansion-panel *ngFor="let portion of portions">
+<mat-accordion multi="true">
+  <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
     <mat-expansion-panel-header>
-      Meal {{portion.food.name}}
+      Meal
     </mat-expansion-panel-header>
-
-    <!-- <div *ngFor="let portion of meal.Portions">{{portion.food.name}} {{portion.quantity}}</div> -->
+    <div *ngFor="let portion of meal.portions">
+      {{portion.food.name}} {{portion.quantity}} {{portion.proteins}} {{portion.carbs}} {{portion.fats}}
+      {{portion.calories}}
+    </div>
 
   </mat-expansion-panel>
 
@@ -14,24 +15,20 @@
 
 <div class="container-fab-demo">
 
-  <mat-card>
-    <mat-card-title>Click me</mat-card-title>
-    <eco-fab-speed-dial [(open)]="open" direction="up" animationMode="fling">
+  <eco-fab-speed-dial [(open)]="open" direction="up" animationMode="fling">
 
-      <eco-fab-speed-dial-trigger [spin]="spin">
-        <button mat-fab (click)="doAction('trigger')">
-          <mat-icon class="spin180">add</mat-icon>
-        </button>
-      </eco-fab-speed-dial-trigger>
+    <eco-fab-speed-dial-trigger [spin]="spin">
+      <button mat-fab (click)="doAction('trigger')">
+        <mat-icon class="spin180">add</mat-icon>
+      </button>
+    </eco-fab-speed-dial-trigger>
 
-      <eco-fab-speed-dial-actions>
-        <button mat-mini-fab (click)="addMeal()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </eco-fab-speed-dial-actions>
+    <eco-fab-speed-dial-actions>
+      <button mat-mini-fab (click)="addMeal()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </eco-fab-speed-dial-actions>
 
-    </eco-fab-speed-dial>
-  </mat-card>
-
+  </eco-fab-speed-dial>
 
 </div>

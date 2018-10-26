@@ -1,20 +1,24 @@
-import { Portion } from "./portion";
+import { Portion } from './portion';
 
 export class Meal {
 
-    private portions: Portion[];
-    public id: number = 1;
+    private _portions: Portion[] = [];
+    public id: number;
 
     constructor() { }
 
-    get Portions(): Portion[] {
-        return { ...this.portions };
+    public addPortion(portion: Portion) {
+        this._portions.push(portion);
+    }
+
+    get portions(): ReadonlyArray<Portion> {
+        return this._portions;
     }
 
     get Calories(): number {
-        let totalCalories: number = 0;
-        for (let i = 0; i < this.portions.length; i++)
-            totalCalories += this.portions[i].food.calories * this.portions[i].quantity;
+        let totalCalories = 0;
+        for (let i = 0; i < this._portions.length; i++)
+            totalCalories += this._portions[i].food.calories * this._portions[i].quantity;
         return totalCalories;
     }
 }
