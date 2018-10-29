@@ -9,9 +9,9 @@ export class Food implements FoodData {
     public readonly carbs: number;
     public readonly fats: number;
 
-    constructor(data: FoodData) {
+    constructor(data: FoodData, id: string) {
 
-        this.id = data.id;
+        this.id = id;
         this.name = data.name;
         this.brand = data.brand;
         this.proteins = data.proteins;

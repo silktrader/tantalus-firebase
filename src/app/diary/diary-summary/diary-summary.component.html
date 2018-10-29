@@ -1,7 +1,7 @@
 <mat-accordion multi="true">
   <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
     <mat-expansion-panel-header>
-      Meal
+      Meal {{meal.calories}}
     </mat-expansion-panel-header>
     <div *ngFor="let portion of meal.portions">
       {{portion.food.name}} {{portion.quantity}} {{portion.proteins}} {{portion.carbs}} {{portion.fats}}

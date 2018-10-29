@@ -27,7 +27,6 @@ export class AddFoodComponent implements OnInit {
   onSubmit() {
     const form = this.addFoodForm.value;
     this.foodsService.addFood({
-      id: '',   // tk uhm
       name: form.name,
       brand: form.brand,
       proteins: +form.proteins || 0,

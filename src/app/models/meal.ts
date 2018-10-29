@@ -15,7 +15,7 @@ export class Meal {
         return this._portions;
     }
 
-    get Calories(): number {
+    get calories(): number {
         let totalCalories = 0;
         for (let i = 0; i < this._portions.length; i++)
             totalCalories += this._portions[i].food.calories * this._portions[i].quantity;

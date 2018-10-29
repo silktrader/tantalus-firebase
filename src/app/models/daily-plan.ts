@@ -49,7 +49,7 @@ export class DiaryEntry {
     public get Calories(): number {
         let totalCalories: number = 0;
         for (let i = 0; i < this.meals.length; i++)
-            totalCalories += this.meals[i].Calories;
+            totalCalories += this.meals[i].calories;
         return totalCalories;
     }
 

@@ -30,7 +30,7 @@ export class AddPortionDialogComponent {
 }
 
 export interface AddPortionDialogData {
-  meal: Meal;
   food: Food;
+  mealID: number;
   quantity: number;
 }

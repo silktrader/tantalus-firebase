@@ -13,7 +13,7 @@
     </form>
 
     <section>
-      <div class="search-items" *ngFor="let food of filteredFoods | async" (click)="openPortionDialog(food)">
+      <div class="search-items" *ngFor="let food of filteredFoods$ | async" (click)="openPortionDialog(food)">
         <span class="search-item-name">{{food.name}}</span>
         <span class="search-item-calories">{{food.approximateCalories}}</span>
       </div>

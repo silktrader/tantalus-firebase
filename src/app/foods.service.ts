@@ -17,31 +17,28 @@ export class FoodsService {
   constructor(private readonly af: AngularFirestore) {
     this.foods$ = af.collection<FoodData>('foods').snapshotChanges().pipe(
       shareReplay(1),
-      map(data => data.map(foodData => this.createFood({ ...foodData.payload.doc.data(), id: foodData.payload.doc.id })
+      map(data => data.map(foodData => this.createFood(foodData.payload.doc.data(), foodData.payload.doc.id)
       )));
-    // this.foods$ = af.collection<IFood>('foods').valueChanges().pipe(map(data => data.map(foodData =>
-    //   this.createFood({ ...foodData, id: "asd" })
-    // )));
   }
 
-  private createFood(data: FoodData): Food {
-    return new Food(data);
+  private createFood(data: FoodData, id: string): Food {
+    return new Food(data, id);
   }
 
   // tk handle missing food gracefully
   public getFood(id: string): Observable<Food> {
-    return (this.af.doc<FoodData>(`foods/${id}`).valueChanges() as Observable<FoodData>).pipe(map(data => this.createFood(data)));
+    return (this.af.doc<FoodData>(`foods/${id}`).valueChanges() as Observable<FoodData>).pipe(map(data => this.createFood(data, id)));
   }
 
   public addFood(food: FoodData): Promise<void> {
     return this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
-  public editFood(food: FoodData) {
+  public editFood(food: Food) {
     this.af.doc(`foods/${food.id}`).set(food);
   }
 
-  public deleteFood(food: FoodData): Promise<void> {
+  public deleteFood(food: Food): Promise<void> {
     return this.af.collection('foods').doc(food.id).delete().catch(error => console.log(error));
   }
 
@@ -58,6 +55,6 @@ export class FoodsService {
       }),
       debounceTime(200),
       distinctUntilChanged(),
-      map(data => data.map(x => this.createFood({ ...x.payload.doc.data(), id: x.payload.doc.id }))));
+      map(data => data.map(x => this.createFood(x.payload.doc.data(), x.payload.doc.id))));
   }
 }

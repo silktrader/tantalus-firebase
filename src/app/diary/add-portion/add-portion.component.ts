@@ -30,8 +30,10 @@ export class AddPortionComponent implements OnInit {
   ngOnInit() {
     this.filteredFoods$ = this.foodsService.getFilteredFoods(this.startAt$);
 
-    if (this.route.parent === null)
+    if (this.route.parent === null) {
+      console.log('ERROR');
       return; // tk throw error warn user about wrong URL
+    }
 
     this.route.parent.params.subscribe(params => {
       const date = new Date(+params['year'], +params['month'] - 1, +params['day']);
@@ -45,18 +47,21 @@ export class AddPortionComponent implements OnInit {
     this.startAt$.next(inputText);
   }
 
-  openPortionDialog(food: Food, meal: Meal): void {
+  openPortionDialog(food: Food, meal: number): void {
+
+    meal = 0;
+
     const dialog = this.dialog.open(AddPortionDialogComponent, {
       data: {
         food: food,
-        meal: meal || new Meal()
+        meal: meal
       }
     });
 
     dialog.afterClosed().subscribe(data => {
       if (data === undefined)
         return;
-      this.selectedPortions.push({ food: data.food, quantity: data.quantity, meal: meal || new Meal() });
+      this.selectedPortions.push({ food: data.food, quantity: data.quantity, mealID: meal });
     });
   }
 
@@ -65,9 +70,10 @@ export class AddPortionComponent implements OnInit {
   }
 
   registerPortions() {
-    this.selectedPortions.forEach(portion => {
-      this.plannerService.addPortion({ id: shortid.generate(), foodID: portion.food.id, quantity: portion.quantity, mealID: portion.meal.id });
-    });
+    for (let i = 0; i < this.selectedPortions.length; i++) {
+      const data = this.selectedPortions[i];
+      this.plannerService.addPortion({ id: shortid.generate(), foodID: data.food.id, quantity: data.quantity, mealID: data.mealID });
+    }
 
     this.selectedPortions = [];
   }

@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { PlannerService, IDiaryEntry } from '../planner.service';
 import { PortionData } from '../PortionData';
 import { Observable } from 'rxjs';
-import { FoodData } from 'src/app/FoodData';
+import { FoodData, FoodDataID } from 'src/app/FoodData';
 import { Portion } from 'src/app/models/portion';
 
 @Component({
@@ -18,7 +18,6 @@ export class DiarySummaryComponent implements OnInit {
   public open = false;
   public spin = false;
 
-  // private _meals = new Map<Number, Meal>();
   private _meals: Meal[] = [];
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService) { }
@@ -32,7 +31,7 @@ export class DiarySummaryComponent implements OnInit {
     this.plannerService.portions.subscribe(mergedData => this.createMeals(mergedData.portions, mergedData.foods));
   }
 
-  private createMeals(portions: PortionData[], foods: FoodData[]): void {
+  private createMeals(portions: PortionData[], foods: FoodDataID[]): void {
 
     const meals: Meal[] = [];
 
@@ -43,11 +42,11 @@ export class DiarySummaryComponent implements OnInit {
       if (meals[mealID] === undefined)
         meals[mealID] = new Meal();
 
-      const foodData: FoodData | undefined = foods.find(food => food.id === foodID);
+      const foodData: FoodDataID | undefined = foods.find(food => food.id === foodID);
       if (foodData === undefined)
         continue;   // tk warn user?
 
-      meals[mealID].addPortion(new Portion(id, quantity, new Food(foodData), mealID));
+      meals[mealID].addPortion(new Portion(id, quantity, new Food(foodData, foodData.id), mealID));
     }
 
     // filter out undefined meals when gaps are present, tk sort them later
