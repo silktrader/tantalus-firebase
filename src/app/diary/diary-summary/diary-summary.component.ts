@@ -38,12 +38,16 @@ export class DiarySummaryComponent implements OnInit {
 
     for (let i = 0; i < portions.length; i++) {
 
-      const { id, quantity, mealID } = portions[i];
+      const { id, quantity, mealID, foodID } = portions[i];
 
       if (meals[mealID] === undefined)
         meals[mealID] = new Meal();
 
-      meals[mealID].addPortion(new Portion(id, quantity, new Food(foods[i]), mealID));
+      const foodData: FoodData | undefined = foods.find(food => food.id === foodID);
+      if (foodData === undefined)
+        continue;   // tk warn user?
+
+      meals[mealID].addPortion(new Portion(id, quantity, new Food(foodData), mealID));
     }
 
     // filter out undefined meals when gaps are present, tk sort them later

@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Add portion of <em>{{food.name}}</em></h2>
-<mat-dialog-content>
+<mat-dialog-content (keyup.enter)="onEnter()">
   <mat-form-field class="search" appearance="outline">
     <mat-label>Quantity</mat-label>
     <input type="number" matInput [(ngModel)]="data.quantity" autocomplete="off" min="0" max="1000">

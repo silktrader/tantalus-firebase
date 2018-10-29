@@ -1,16 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable, of, Subject, BehaviorSubject } from "rxjs";
-
 import { Router } from '@angular/router';
-
-interface User {
-  uid: string;
-  email: string;
-  photoURL?: string;
-  displayName?: string;
-  favoriteColor?: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -30,11 +20,12 @@ export class AuthService {
   }
 
   get isLoggedIn(): boolean {
-    //console.log("User check: is " + (this.user == null ? "null" : this.user.uid));
     return true;
   }
 
-  get userID(): string {
+  get userID(): string | null {
+    if (this.afAuth.auth.currentUser == null)
+      return null; // tk warn?
     return this.afAuth.auth.currentUser.uid;
   }
 }

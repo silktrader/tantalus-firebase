@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
 import { Food } from '../food';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -23,7 +23,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   });
 
   food$: Observable<Food>;
-  private food: Food | null;
+  private food: Food;
   private subscription: Subscription;
 
   constructor(private foodsService: FoodsService, private location: Location, private router: Router, private activatedRoute: ActivatedRoute) { }
@@ -31,7 +31,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.food$ = this.activatedRoute.paramMap.pipe(
       switchMap((params: ParamMap) =>
-        this.foodsService.getFood(params.get('id')))
+        this.foodsService.getFood(params.get('id') || ''))
     );
 
     this.subscription = this.food$.subscribe(food => {
@@ -41,13 +41,13 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.food = null;
     this.subscription.unsubscribe();
   }
 
   onSubmit() {
     const form = this.addFoodForm.value;
-    this.foodsService.editFood(this.food.id, {
+    this.foodsService.editFood({
+      id: this.food.id,
       name: form.name,
       brand: form.brand,
       proteins: +form.proteins || 0,
@@ -55,7 +55,6 @@ export class EditFoodComponent implements OnInit, OnDestroy {
       fats: +form.fats || 0,
     });
 
-    this.food = null;
     this.subscription.unsubscribe();
 
     this.location.back();

@@ -20,13 +20,14 @@ export class AddFoodComponent implements OnInit {
     fats: new FormControl('')
   });
 
-  constructor(private readonly foodsService: FoodsService, private readonly location: Location, private readonly router: Router) { }
+  constructor(private readonly foodsService: FoodsService, private readonly router: Router) { }
 
   ngOnInit() { }
 
   onSubmit() {
     const form = this.addFoodForm.value;
     this.foodsService.addFood({
+      id: '',   // tk uhm
       name: form.name,
       brand: form.brand,
       proteins: +form.proteins || 0,
@@ -35,12 +36,10 @@ export class AddFoodComponent implements OnInit {
     });
 
     this.router.navigate(['/foods']);
-    //this.location.back();
   }
 
   onDiscard() {
     this.router.navigate(['foods']);
-    //this.location.back();
   }
 
 }

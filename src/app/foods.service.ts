@@ -28,16 +28,17 @@ export class FoodsService {
     return new Food(data);
   }
 
+  // tk handle missing food gracefully
   public getFood(id: string): Observable<Food> {
-    return this.af.doc<FoodData>(`foods/${id}`).valueChanges().pipe(map(data => this.createFood({ ...data, id: id })));
+    return (this.af.doc<FoodData>(`foods/${id}`).valueChanges() as Observable<FoodData>).pipe(map(data => this.createFood(data)));
   }
 
   public addFood(food: FoodData): Promise<void> {
     return this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
-  public editFood(id: string, food: FoodData) {
-    this.af.doc(`foods/${id}`).set(food);
+  public editFood(food: FoodData) {
+    this.af.doc(`foods/${food.id}`).set(food);
   }
 
   public deleteFood(food: FoodData): Promise<void> {

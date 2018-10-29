@@ -24,6 +24,9 @@ export class AddPortionDialogComponent {
     this.dialogRef.close();
   }
 
+  onEnter(): void {
+    this.dialogRef.close(this.data);
+  }
 }
 
 export interface AddPortionDialogData {

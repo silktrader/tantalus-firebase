@@ -1,5 +1,5 @@
 export interface FoodData {
-    id?: string;
+    id: string;
     name: string;
     brand: string;
     proteins: number;
