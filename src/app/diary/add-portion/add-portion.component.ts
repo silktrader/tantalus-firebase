@@ -47,21 +47,19 @@ export class AddPortionComponent implements OnInit {
     this.startAt$.next(inputText);
   }
 
-  openPortionDialog(food: Food, meal: number): void {
-
-    meal = 0;
+  openPortionDialog(food: Food): void {
 
     const dialog = this.dialog.open(AddPortionDialogComponent, {
       data: {
         food: food,
-        meal: meal
+        currentMeals$: this.plannerService.currentMeals
       }
     });
 
-    dialog.afterClosed().subscribe(data => {
+    dialog.afterClosed().subscribe((data: AddPortionDialogData) => {
       if (data === undefined)
         return;
-      this.selectedPortions.push({ food: data.food, quantity: data.quantity, mealID: meal });
+      this.selectedPortions.push({ food: data.food, quantity: data.quantity, mealID: data.mealID });
     });
   }
 

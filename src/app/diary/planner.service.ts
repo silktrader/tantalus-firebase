@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, startWith, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
 import { FoodData, FoodDataID } from '../FoodData';
 import { PortionData } from './PortionData';
+import { Meal } from '../models/meal';
+import { Food } from '../foods/food';
+import { Portion } from '../models/portion';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
@@ -40,8 +43,40 @@ export class PlannerService {
 
         return combineLatest(foodData$);
       }),
-      map((result) => ({ portions, foods: result }))
+      map((foods) => ({ portions, foods: foods }))
     );
+  }
+
+  public get currentMeals(): Observable<number[]> {
+
+    return this.entryReference.valueChanges().pipe(
+      map((x: IDiaryEntry) => Array.from(new Set<number>(x.portions.map(portion => portion.mealID))).sort())
+    );
+  }
+
+  public getMealName(index: number, total: number): string | undefined {
+    if (index === 0)
+      return 'Breakfast';
+
+    if (index === 1) {
+      if (total > 2)
+        return 'Morning Snack';
+      return 'Lunch';
+    }
+
+    if (index === 2) {
+      if (total > 3)
+        return 'Lunch';
+      return 'Dinner';
+    }
+
+    if (index === 4) {
+      if (total === 4)
+        return 'Dinner';
+      return 'Afternoon Snack';
+    }
+
+    return 'Dinner';
   }
 
   public addPortion(portionData: PortionData) {

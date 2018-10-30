@@ -1,13 +1,25 @@
-<h2 mat-dialog-title>Add portion of <em>{{food.name}}</em></h2>
+<h2 mat-dialog-title>Add portion of <em>{{data.food.name}}</em></h2>
 <mat-dialog-content (keyup.enter)="onEnter()">
   <mat-form-field class="search" appearance="outline">
     <mat-label>Quantity</mat-label>
     <input type="number" matInput [(ngModel)]="data.quantity" autocomplete="off" min="0" max="1000">
   </mat-form-field>
+
+  <ng-container *ngIf="data.currentMeals$ | async as meals">
+    <mat-button-toggle-group [(ngModel)]="data.mealID">
+      <mat-button-toggle *ngFor="let meal of meals" [value]="meal">
+        {{planner.getMealName(meal)}}
+      </mat-button-toggle>
+      <mat-button-toggle *ngIf="meals.length < 5" [value]="meals.length">
+        New Meal
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </ng-container>
+
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Discard</button>
+  <button mat-button [mat-dialog-close]="undefined">Discard</button>
   <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
   <button mat-button [mat-dialog-close]="data">Add</button>
 </mat-dialog-actions>

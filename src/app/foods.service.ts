@@ -5,7 +5,7 @@ import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 
 import { Food } from './foods/food';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
-import { FoodData } from './FoodData';
+import { FoodData, FoodDataID } from './FoodData';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +34,7 @@ export class FoodsService {
     return this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
-  public editFood(food: Food) {
+  public editFood(food: FoodDataID) {
     this.af.doc(`foods/${food.id}`).set(food);
   }
 
