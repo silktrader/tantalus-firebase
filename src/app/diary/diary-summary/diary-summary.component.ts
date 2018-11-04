@@ -28,35 +28,7 @@ export class DiarySummaryComponent implements OnInit {
       this.plannerService.initialise(date);
     });
 
-    this.plannerService.portions.subscribe(mergedData => this.createMeals(mergedData.portions, mergedData.foods));
-  }
-
-  private createMeals(portions: PortionData[], foods: FoodDataID[]): void {
-
-    const meals: Meal[] = [];
-
-    for (let i = 0; i < portions.length; i++) {
-
-      const { id, quantity, mealID, foodID } = portions[i];
-
-      if (meals[mealID] === undefined)
-        meals[mealID] = new Meal();
-
-      const foodData: FoodDataID | undefined = foods.find(food => food.id === foodID);
-      if (foodData === undefined)
-        continue;   // tk warn user?
-
-      meals[mealID].addPortion(new Portion(id, quantity, new Food(foodData, foodData.id), mealID));
-    }
-
-    // filter out undefined meals when gaps are present, tk sort them later
-    this._meals = [];
-    for (const meal of meals) {
-      if (meal === undefined)
-        continue;
-      this._meals.push(meal);
-    }
-
+    this.plannerService.meals.subscribe(data => this._meals = data);
   }
 
   get meals(): ReadonlyArray<Meal> {
@@ -69,5 +41,9 @@ export class DiarySummaryComponent implements OnInit {
 
   public addMeal() {
     this.router.navigate(['add-portion'], { relativeTo: this.route });
+  }
+
+  public getMealName(index: number) {
+    return this.plannerService.getMealName(index, 1 + Math.max(...this._meals.map(meal => meal.order)));
   }
 }

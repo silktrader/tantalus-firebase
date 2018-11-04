@@ -13,8 +13,10 @@ import { Portion } from '../models/portion';
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
 
-  private portions$: Observable<{ portions: PortionData[], foods: FoodDataID[] }>;
   private entryReference: AngularFirestoreDocument<IDiaryEntry>;
+
+  // private portions$: Observable<{ portions: PortionData[], foods: FoodDataID[] }>;
+  private meals$: Observable<Meal[]>;
 
   constructor(private readonly auth: AuthService, private readonly af: AngularFirestore) { }
 
@@ -30,7 +32,7 @@ export class PlannerService {
 
     let portions: PortionData[];
 
-    this.portions$ = this.entryReference.valueChanges().pipe(
+    this.meals$ = this.entryReference.valueChanges().pipe(
       switchMap((data: IDiaryEntry) => {
 
         portions = data.portions;
@@ -43,7 +45,7 @@ export class PlannerService {
 
         return combineLatest(foodData$);
       }),
-      map((foods) => ({ portions, foods: foods }))
+      map((foods) => this.createMeals(portions, foods))
     );
   }
 
@@ -54,7 +56,8 @@ export class PlannerService {
     );
   }
 
-  public getMealName(index: number, total: number): string | undefined {
+  // tk turn into static?
+  public getMealName(index: number, total: number): string {
     if (index === 0)
       return 'Breakfast';
 
@@ -83,8 +86,37 @@ export class PlannerService {
     (<any>this.entryReference).set({ portions: firestore.FieldValue.arrayUnion(portionData) }, { merge: true });
   }
 
-  public get portions(): Observable<{ portions: PortionData[], foods: FoodDataID[] }> {
-    return this.portions$;
+  public get meals(): Observable<Meal[]> {
+    return this.meals$;
+  }
+
+  private createMeals(portions: PortionData[], foods: FoodDataID[]): Meal[] {
+
+
+    const meals: Meal[] = [];
+
+    for (let i = 0; i < portions.length; i++) {
+
+      const { id, quantity, mealID, foodID } = portions[i];
+
+      if (meals[mealID] === undefined)
+        meals[mealID] = new Meal(mealID);
+
+      const foodData: FoodDataID | undefined = foods.find(food => food.id === foodID);
+      if (foodData === undefined)
+        continue;   // tk warn user?
+
+      meals[mealID].addPortion(new Portion(id, quantity, new Food(foodData, foodData.id), mealID));
+    }
+
+    // filter out undefined meals when gaps are present, tk sort them later
+    return meals.filter(meal => meal !== undefined).sort((a: Meal, b: Meal) => a.order - b.order);
+  }
+
+  public getPortion(id: string): Observable<PortionData | undefined> {
+    return this.entryReference.valueChanges().pipe(
+      map((x: IDiaryEntry) => x.portions.find(portion => portion.id === id))
+    );
   }
 }
 

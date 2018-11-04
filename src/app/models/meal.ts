@@ -3,9 +3,8 @@ import { Portion } from './portion';
 export class Meal {
 
     private _portions: Portion[] = [];
-    public id: number;
 
-    constructor() { }
+    constructor(public readonly order: number) { }
 
     public addPortion(portion: Portion) {
         this._portions.push(portion);

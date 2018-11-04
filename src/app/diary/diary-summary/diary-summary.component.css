@@ -1,0 +1,50 @@
+.meal-header {
+    display: flex;
+    width: 100%;
+}
+
+.meal-header-order {
+    flex-wrap: nowrap;
+    flex-grow: 2;
+    font-weight: bold;
+    width: 60%;
+}
+
+.meal-header-calories {
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    width: 20%;
+    text-align: right;
+    padding-right: 10%;
+}
+
+.mat-list-item-content, a {
+    display: flex;
+    width: 100%;
+}
+
+.portion-name {
+    flex-grow: 2;
+    width: 30%;
+    font-weight: 500;
+}
+
+.portion-quantity {
+    flex-grow: 1;
+    width: 15%;
+    text-align: right;
+    font-style: italic;
+}
+
+.portion-proteins, .portion-carbs, .portion-fats {
+    flex-grow: 1;
+    width: 10%;
+    text-align: right;
+}
+
+.portion-calories {
+    flex-grow: 1;
+    width: 15%;
+    font-weight: 500;
+    text-align: right;
+}

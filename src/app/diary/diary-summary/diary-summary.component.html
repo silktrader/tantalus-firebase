@@ -1,12 +1,23 @@
 <mat-accordion multi="true">
   <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
     <mat-expansion-panel-header>
-      Meal {{meal.calories}}
+      <span class="meal-header">
+        <h3 class="meal-header-order">{{getMealName(meal.order)}}</h3>
+        <h4 class="meal-header-calories">{{meal.calories | number:'1.0-0'}}</h4>
+      </span>
     </mat-expansion-panel-header>
-    <div *ngFor="let portion of meal.portions">
-      {{portion.food.name}} {{portion.quantity}} {{portion.proteins}} {{portion.carbs}} {{portion.fats}}
-      {{portion.calories}}
-    </div>
+    <mat-nav-list>
+      <mat-list-item class="portion" *ngFor="let portion of meal.portions">
+        <a [routerLink]="['edit-portion', portion.id]" routerLinkActive="active">
+          <span class="portion-name">{{portion.food.name}}</span>
+          <span class="portion-quantity">{{portion.quantity | number:'1.0-0'}} g.</span>
+          <span class="portion-proteins">{{portion.proteins | number:'1.0-0'}}</span>
+          <span class="portion-carbs">{{portion.carbs | number:'1.0-0'}}</span>
+          <span class="portion-fats">{{portion.fats | number:'1.0-0'}}</span>
+          <span class="portion-calories">{{portion.calories | number:'1.0-0'}}</span>
+        </a>
+      </mat-list-item>
+    </mat-nav-list>
 
   </mat-expansion-panel>
 
