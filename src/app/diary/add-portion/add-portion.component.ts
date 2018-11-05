@@ -6,7 +6,7 @@ import { Food } from 'src/app/foods/food';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { AddPortionDialogComponent, AddPortionDialogData } from '../add-portion-dialog/add-portion-dialog.component';
-import { PlannerService } from '../planner.service';
+import { PlannerService, DateURL } from '../planner.service';
 import { Meal } from 'src/app/models/meal';
 import { ActivatedRoute } from '@angular/router';
 import * as shortid from 'shortid';
@@ -24,6 +24,8 @@ export class AddPortionComponent implements OnInit {
   startAt$: BehaviorSubject<string> = new BehaviorSubject('');
   selectedPortions: AddPortionDialogData[] = [];
 
+  private dateURL: DateURL;
+
   constructor(private readonly foodsService: FoodsService, private readonly plannerService: PlannerService,
     private dialog: MatDialog, private route: ActivatedRoute) { }
 
@@ -36,8 +38,7 @@ export class AddPortionComponent implements OnInit {
     }
 
     this.route.parent.params.subscribe(params => {
-      const date = new Date(+params['year'], +params['month'] - 1, +params['day']);
-      this.plannerService.initialise(date);
+      this.dateURL = { year: params.year, month: params.month, day: params.day };
     });
   }
 
@@ -52,7 +53,7 @@ export class AddPortionComponent implements OnInit {
     const dialog = this.dialog.open(AddPortionDialogComponent, {
       data: {
         food: food,
-        currentMeals$: this.plannerService.currentMeals
+        currentMeals$: this.plannerService.getCurrentMeals(this.dateURL),
       }
     });
 
@@ -70,7 +71,8 @@ export class AddPortionComponent implements OnInit {
   registerPortions() {
     for (let i = 0; i < this.selectedPortions.length; i++) {
       const data = this.selectedPortions[i];
-      this.plannerService.addPortion({ id: shortid.generate(), foodID: data.food.id, quantity: data.quantity, mealID: data.mealID });
+      this.plannerService.addPortion(this.dateURL, { id: shortid.generate(), foodID: data.food.id, quantity: data.quantity, mealID: data.mealID });
+      // tk move shortid into service
     }
 
     this.selectedPortions = [];

@@ -15,7 +15,7 @@ export class AddPortionDialogComponent {
   quantityInput: FormControl = new FormControl();
 
   constructor(public dialogRef: MatDialogRef<AddPortionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: AddPortionDialogData, public planner: PlannerService) {
-    planner.currentMeals.pipe(first()).subscribe(meals => data.mealID = meals.length - 1);
+    // planner.currentMeals.pipe(first()).subscribe(meals => data.mealID = meals.length - 1);
     // tk extra document read probably
   }
 
