@@ -6,6 +6,7 @@ export class Meal {
 
     constructor(public readonly order: number) { }
 
+    // tk handle duplicate portions with same id?
     public addPortion(portion: Portion) {
         this._portions.push(portion);
     }

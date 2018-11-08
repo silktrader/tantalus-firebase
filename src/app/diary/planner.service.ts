@@ -85,6 +85,12 @@ export class PlannerService {
     (<any>this.getDocument(dateURL)).set({ portions: firestore.FieldValue.arrayUnion(portionData) }, { merge: true });
   }
 
+  public changePortion(dateURL: DateURL, removedPortion: PortionData, newPortion: PortionData) {
+    const document = <any>this.getDocument(dateURL);
+    document.set({ portions: firestore.FieldValue.arrayRemove(removedPortion) }, { merge: true });
+    document.set({ portions: firestore.FieldValue.arrayUnion(newPortion) }, { merge: true });
+  }
+
   private createMeals(portions: PortionData[], foods: FoodDataID[]): Meal[] {
 
     const meals: Meal[] = [];
