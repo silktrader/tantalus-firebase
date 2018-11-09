@@ -20,14 +20,14 @@
 .quantity {
     /* display: flex;
     justify-content: center; */
-    min-width: 6ch;
+    min-width: 8ch;
     max-width: 10ch;
     width: 100%;
     font-weight: bold;
 }
 
 .quantity-editor {
-    max-width: 4ch;
+    max-width: 5ch;
 }
 
 .quantity-unit {

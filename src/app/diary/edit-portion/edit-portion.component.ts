@@ -6,6 +6,8 @@ import { Portion } from 'src/app/models/portion';
 import { Subscription, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
+
 
 @Component({
   selector: 'app-edit-portion',
@@ -21,7 +23,10 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   public portion: Portion;
   public previewedPortion: Portion;
 
-  public portionForm: FormGroup = new FormGroup({ quantity: new FormControl('', [Validators.required, Validators.maxLength(4)]) });
+  public quantitiesControl = new FormControl('', [Validators.required, PortionQuantityValidator]);
+
+  public portionForm: FormGroup = new FormGroup(
+    { quantity: this.quantitiesControl });
 
   constructor(private readonly planner: PlannerService, private route: ActivatedRoute) { }
 
@@ -50,14 +55,11 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
       this.portion = portion;
       this.previewedPortion = portion;
-      this.portionForm.setValue({ quantity: this.portion.quantity });
+      this.quantitiesControl.setValue(this.portion.quantity);
 
     });
 
-    const quantityControl = this.portionForm.get('quantity');
-    if (quantityControl === null)
-      return;
-    this.subscription.add(quantityControl.valueChanges.subscribe((newQuantity: number) => {
+    this.subscription.add(this.quantitiesControl.valueChanges.subscribe((newQuantity: number) => {
       this.previewedPortion = new Portion(this.portion.id, newQuantity, this.portion.food, this.portion.mealID);
     }));
   }
@@ -69,6 +71,21 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   private changePortion(): void {
     const { id, foodID, mealID, quantity } = this.previewedPortion;
     this.planner.changePortion(this.date, { id, foodID, mealID, quantity: this.portion.quantity }, { id, foodID, mealID, quantity });
+  }
+
+  private resetQuantity(): void {
+    this.quantitiesControl.reset(this.portion.quantity);
+    this.previewedPortion = this.portion;
+  }
+
+  getQuantitiesControlError() {
+    if (this.quantitiesControl.hasError('required'))
+      return 'Required';
+    if (this.quantitiesControl.hasError('integer'))
+      return 'No decimals';
+    if (this.quantitiesControl.hasError('range'))
+      return 'Must be within [0, 5,000] grams';
+    return '';
   }
 
 }
