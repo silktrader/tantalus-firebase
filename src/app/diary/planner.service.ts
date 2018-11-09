@@ -85,10 +85,11 @@ export class PlannerService {
     (<any>this.getDocument(dateURL)).set({ portions: firestore.FieldValue.arrayUnion(portionData) }, { merge: true });
   }
 
-  public changePortion(dateURL: DateURL, removedPortion: PortionData, newPortion: PortionData) {
+  public changePortion(dateURL: DateURL, removedPortion: PortionData, newPortion: PortionData): Promise<[void, void]> {
     const document = <any>this.getDocument(dateURL);
-    document.set({ portions: firestore.FieldValue.arrayRemove(removedPortion) }, { merge: true });
-    document.set({ portions: firestore.FieldValue.arrayUnion(newPortion) }, { merge: true });
+    const removal: Promise<void> = document.set({ portions: firestore.FieldValue.arrayRemove(removedPortion) }, { merge: true });
+    const addition: Promise<void> = document.set({ portions: firestore.FieldValue.arrayUnion(newPortion) }, { merge: true });
+    return Promise.all([removal, addition]);
   }
 
   private createMeals(portions: PortionData[], foods: FoodDataID[]): Meal[] {

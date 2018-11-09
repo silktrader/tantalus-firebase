@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlannerService, DateURL } from '../planner.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Meal } from 'src/app/models/meal';
 import { Portion } from 'src/app/models/portion';
 import { Subscription, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
+import { MatSnackBar } from '@angular/material';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   private date: DateURL;
   private subscription: Subscription;
 
-  public portion: Portion;
+  public originalPortion: Portion;
   public previewedPortion: Portion;
 
   public quantitiesControl = new FormControl('', [Validators.required, PortionQuantityValidator]);
@@ -28,7 +29,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   public portionForm: FormGroup = new FormGroup(
     { quantity: this.quantitiesControl });
 
-  constructor(private readonly planner: PlannerService, private route: ActivatedRoute) { }
+  constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
 
@@ -53,14 +54,14 @@ export class EditPortionComponent implements OnInit, OnDestroy {
       if (portion === undefined)
         return;
 
-      this.portion = portion;
+      this.originalPortion = portion;
       this.previewedPortion = portion;
-      this.quantitiesControl.setValue(this.portion.quantity);
+      this.quantitiesControl.setValue(this.originalPortion.quantity);
 
     });
 
     this.subscription.add(this.quantitiesControl.valueChanges.subscribe((newQuantity: number) => {
-      this.previewedPortion = new Portion(this.portion.id, newQuantity, this.portion.food, this.portion.mealID);
+      this.previewedPortion = new Portion(this.originalPortion.id, newQuantity, this.originalPortion.food, this.originalPortion.mealID);
     }));
   }
 
@@ -68,14 +69,43 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private changePortion(): void {
-    const { id, foodID, mealID, quantity } = this.previewedPortion;
-    this.planner.changePortion(this.date, { id, foodID, mealID, quantity: this.portion.quantity }, { id, foodID, mealID, quantity });
+  get saveDisabled(): boolean {
+    return !this.portionForm.valid || this.quantitiesControl.value === this.originalPortion.quantity;
   }
 
-  private resetQuantity(): void {
-    this.quantitiesControl.reset(this.portion.quantity);
-    this.previewedPortion = this.portion;
+  save(): void {
+    this.changePortion(this.originalPortion, this.previewedPortion);
+
+    // navigate here to avoid multiple components reload on undoing actions
+    this.router.navigate(['../..'], { relativeTo: this.route });
+  }
+
+  changePortion(initial: Portion, final: Portion): void {
+    const { id, foodID, mealID } = initial;
+    this.planner.changePortion(this.date,
+      { id, foodID, mealID, quantity: initial.quantity },
+      { id, foodID, mealID, quantity: final.quantity })
+      .then(() => {
+        this.notifyChangePortion(initial, final);
+      });
+  }
+
+  private notifyChangePortion(initial: Portion, final: Portion) {
+    const quantityDifference: number = initial.quantity - final.quantity;
+    const message = (quantityDifference > 0) ?
+      `Decreased ${initial.food.name}'s portion by ${quantityDifference}g.` :
+      `Increased ${initial.food.name}'s portion by ${-quantityDifference}g.`;
+    const snackBarRef = this.snackBar.open(message, 'Undo', {
+      duration: 3000
+    });
+    snackBarRef.onAction().subscribe(() => {
+      this.changePortion(final, initial);
+    });
+  }
+
+  resetQuantity(): void {
+    this.quantitiesControl.reset(this.originalPortion.quantity);
+    this.previewedPortion = this.originalPortion;
   }
 
   getQuantitiesControlError() {
