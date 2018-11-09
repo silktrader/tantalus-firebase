@@ -92,6 +92,10 @@ export class PlannerService {
     return Promise.all([removal, addition]);
   }
 
+  public removePortion(dateURL: DateURL, removedPortion: PortionData): Promise<void> {
+    return (<any>this.getDocument(dateURL)).set({ portions: firestore.FieldValue.arrayRemove(removedPortion) }, { merge: true });
+  }
+
   private createMeals(portions: PortionData[], foods: FoodDataID[]): Meal[] {
 
     const meals: Meal[] = [];

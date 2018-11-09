@@ -73,14 +73,27 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     return !this.portionForm.valid || this.quantitiesControl.value === this.originalPortion.quantity;
   }
 
-  save(): void {
+  public reset(): void {
+    this.quantitiesControl.reset(this.originalPortion.quantity);
+    this.previewedPortion = this.originalPortion;
+  }
+
+  public save(): void {
     this.changePortion(this.originalPortion, this.previewedPortion);
 
     // navigate here to avoid multiple components reload on undoing actions
     this.router.navigate(['../..'], { relativeTo: this.route });
   }
 
-  changePortion(initial: Portion, final: Portion): void {
+  public delete(): void {
+    const { id, foodID, mealID, quantity } = this.originalPortion;
+    this.planner.removePortion(this.date, { id, foodID, mealID, quantity }).then(() => {
+      this.notifyDeletedPortion(this.originalPortion);
+      this.router.navigate(['../..'], { relativeTo: this.route });
+    });
+  }
+
+  private changePortion(initial: Portion, final: Portion): void {
     const { id, foodID, mealID } = initial;
     this.planner.changePortion(this.date,
       { id, foodID, mealID, quantity: initial.quantity },
@@ -103,9 +116,15 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetQuantity(): void {
-    this.quantitiesControl.reset(this.originalPortion.quantity);
-    this.previewedPortion = this.originalPortion;
+  private notifyDeletedPortion(portion: Portion) {
+    const snackBarRef = this.snackBar.open(`Removed ${portion.food.name}`, 'Undo', {
+      duration: 3000
+    });
+    snackBarRef.onAction().subscribe(() => {
+
+      // recreate old ID
+      this.planner.addPortion(this.date, { id: portion.id, foodID: portion.food.id, quantity: portion.quantity, mealID: portion.mealID });
+    });
   }
 
   getQuantitiesControlError() {
