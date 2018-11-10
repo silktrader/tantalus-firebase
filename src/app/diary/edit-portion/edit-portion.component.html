@@ -1,3 +1,15 @@
+<mat-toolbar class="toolbar" color="primary" class="mat-typography">
+  <button class="toolbar-item" mat-icon-button (click)="back()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-item toolbar-title">
+    <h3>{{title}}</h3>
+  </span>
+  <button class="toolbar-item" mat-icon-button (click)="delete()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-toolbar>
+
 <ng-container *ngIf="originalPortion !== undefined">
   <mat-card>
     <mat-card-header class="header">
@@ -32,7 +44,7 @@
       </section>
 
       <section class="buttons">
-        <button type="button" (click)="delete()" color="warn" mat-stroked-button>Delete</button>
+        <!-- <button type="button" (click)="delete()" color="warn" mat-stroked-button>Delete</button> -->
         <button type="button" (click)="reset()" color="primary" mat-raised-button [disabled]="!portionForm.dirty">Reset</button>
         <button type="submit" (click)="save()" color="primary" mat-raised-button [disabled]="saveDisabled">Change</button>
       </section>

@@ -1,30 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Food } from '../../foods/food';
 import { Meal } from '../../models/meal';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PlannerService } from '../planner.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { Portion } from 'src/app/models/portion';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap, map } from 'rxjs/operators';
+import { UiService } from 'src/app/ui.service';
 
 @Component({
   selector: 'app-diary-summary',
   templateUrl: './diary-summary.component.html',
   styleUrls: ['./diary-summary.component.css']
 })
-export class DiarySummaryComponent implements OnInit {
+export class DiarySummaryComponent implements OnInit, OnDestroy {
 
   public open = false;
   public spin = false;
 
   private meals: Meal[];
+  private subscription: Subscription;
+  private date: Date;
 
-  constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService) { }
+  constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService, public uiService: UiService) { }
 
   ngOnInit() {
-    this.route.params.pipe(
-      switchMap(params => this.plannerService.getMeals({ year: params.year, month: params.month, day: params.day }))).subscribe(meals => this.meals = meals);
-    // tk remember to unsubscribe
+    let date: Date;
+    this.subscription = this.route.params.pipe(
+      switchMap((params: Params) => {
+        const { year, month, day } = params;
+        date = new Date(year, month - 1, day);
+        return this.plannerService.getMeals({ year, month, day });
+      })).subscribe((meals) => {
+
+        // tk verify date first then verify meals
+        console.log(date);
+        this.date = date;
+
+        if (meals === undefined)
+          return;
+
+        this.meals = meals;
+      });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  public get title(): string {
+    return this.date === undefined ? '' : this.date.toLocaleString();
   }
 
   public doAction(event: any) {

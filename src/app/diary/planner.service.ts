@@ -38,6 +38,9 @@ export class PlannerService {
     return this.getDocument(dateURL).valueChanges().pipe(
       switchMap((data: IDiaryEntry) => {
 
+        if (data === undefined)
+          return of();
+
         portions = data.portions;
 
         // draft an array of food ids employed while removing duplicates

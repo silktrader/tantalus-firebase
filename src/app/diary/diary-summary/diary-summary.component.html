@@ -1,45 +1,58 @@
-<mat-accordion multi="true">
-  <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
-    <mat-expansion-panel-header>
-      <span class="meal-header">
-        <h3 class="meal-header-order">{{getMealName(meal.order)}}</h3>
-        <h4 class="meal-header-calories">{{meal.calories | number:'1.0-0'}}</h4>
-      </span>
-    </mat-expansion-panel-header>
-    <mat-nav-list>
-      <mat-list-item class="portion" *ngFor="let portion of meal.portions">
-        <a [routerLink]="['edit-portion', portion.id]" routerLinkActive="active">
-          <span class="portion-name">{{portion.food.name}}</span>
-          <span class="portion-quantity">{{portion.quantity | number:'1.0-0'}} g.</span>
-          <span class="portion-proteins">{{portion.proteins | number:'1.0-0'}}</span>
-          <span class="portion-carbs">{{portion.carbs | number:'1.0-0'}}</span>
-          <span class="portion-fats">{{portion.fats | number:'1.0-0'}}</span>
-          <span class="portion-calories">{{portion.calories | number:'1.0-0'}}</span>
-        </a>
-      </mat-list-item>
-    </mat-nav-list>
+<mat-toolbar color="primary">
+  <button class="toolbar-item" mat-icon-button (click)="uiService.openSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <h3 class="toolbar-title">{{date | date:'longDate'}}</h3>
+  <button class="toolbar-item" mat-icon-button (click)="deleteAll()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-toolbar>
 
-  </mat-expansion-panel>
+<ng-container *ngIf="meals !== undefined && meals.length > 0">
+  <mat-accordion multi="true">
+    <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
+      <mat-expansion-panel-header>
+        <span class="meal-header">
+          <h3 class="meal-header-order">{{getMealName(meal.order)}}</h3>
+          <h4 class="meal-header-calories">{{meal.calories | number:'1.0-0'}}</h4>
+        </span>
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+        <mat-list-item class="portion" *ngFor="let portion of meal.portions">
+          <a [routerLink]="['edit-portion', portion.id]" routerLinkActive="active">
+            <span class="portion-name">{{portion.food.name}}</span>
+            <span class="portion-quantity">{{portion.quantity | number:'1.0-0'}} g.</span>
+            <span class="portion-proteins">{{portion.proteins | number:'1.0-0'}}</span>
+            <span class="portion-carbs">{{portion.carbs | number:'1.0-0'}}</span>
+            <span class="portion-fats">{{portion.fats | number:'1.0-0'}}</span>
+            <span class="portion-calories">{{portion.calories | number:'1.0-0'}}</span>
+          </a>
+        </mat-list-item>
+      </mat-nav-list>
 
-</mat-accordion>
+    </mat-expansion-panel>
+
+  </mat-accordion>
+</ng-container>
+
+<ng-container *ngIf="meals === undefined || meals.length === 0">
+  <mat-card class="no-meals"><span>No recorded meals</span></mat-card>
+</ng-container>
 
 
-<div class="container-fab-demo">
 
-  <eco-fab-speed-dial [(open)]="open" direction="up" animationMode="fling">
+<eco-fab-speed-dial class="fab" [(open)]="open" direction="up" animationMode="fling">
 
-    <eco-fab-speed-dial-trigger [spin]="spin">
-      <button mat-fab (click)="doAction('trigger')">
-        <mat-icon class="spin180">add</mat-icon>
-      </button>
-    </eco-fab-speed-dial-trigger>
+  <eco-fab-speed-dial-trigger [spin]="spin">
+    <button mat-fab (click)="doAction('trigger')">
+      <mat-icon class="spin180">add</mat-icon>
+    </button>
+  </eco-fab-speed-dial-trigger>
 
-    <eco-fab-speed-dial-actions>
-      <button mat-mini-fab (click)="addMeal()">
-        <mat-icon>add</mat-icon>
-      </button>
-    </eco-fab-speed-dial-actions>
+  <eco-fab-speed-dial-actions>
+    <button mat-mini-fab (click)="addMeal()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </eco-fab-speed-dial-actions>
 
-  </eco-fab-speed-dial>
-
-</div>
+</eco-fab-speed-dial>

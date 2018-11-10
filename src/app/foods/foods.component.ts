@@ -41,6 +41,6 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   edit(food: Food): void {
-    this.router.navigate(['/food', food.id])
+    this.router.navigate(['/food', food.id]);
   }
 }

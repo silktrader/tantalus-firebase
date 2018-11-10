@@ -18,8 +18,6 @@
 }
 
 .quantity {
-    /* display: flex;
-    justify-content: center; */
     min-width: 8ch;
     max-width: 10ch;
     width: 100%;
@@ -64,4 +62,17 @@
     display: flex;
     justify-content: space-evenly;
     margin-top: 10%;
+}
+
+.toolbar {
+    justify-content: space-between;
+}
+
+.toolbar-item {
+    flex: 1 1 auto;
+}
+
+.toolbar-title {
+    flex-grow: 8;
+    text-align: center;
 }

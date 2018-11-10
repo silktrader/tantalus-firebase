@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UiService } from './ui.service';
+import { MatSidenav } from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -7,11 +8,12 @@ import { AuthService } from './auth/auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  @ViewChild('sidenav') public sidenav: MatSidenav;
   title = 'tantalus';
 
-  constructor(private authService: AuthService) { }
+  constructor(private uiService: UiService) { }
 
   ngOnInit() {
-
+    this.uiService.setSidenav(this.sidenav);
   }
 }

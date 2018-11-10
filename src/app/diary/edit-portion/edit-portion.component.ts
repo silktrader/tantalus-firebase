@@ -73,6 +73,14 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     return !this.portionForm.valid || this.quantitiesControl.value === this.originalPortion.quantity;
   }
 
+  get title(): string {
+    return 'Edit Portion';
+  }
+
+  public back(): void {
+    this.router.navigate(['../..'], { relativeTo: this.route });
+  }
+
   public reset(): void {
     this.quantitiesControl.reset(this.originalPortion.quantity);
     this.previewedPortion = this.originalPortion;
@@ -82,14 +90,14 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     this.changePortion(this.originalPortion, this.previewedPortion);
 
     // navigate here to avoid multiple components reload on undoing actions
-    this.router.navigate(['../..'], { relativeTo: this.route });
+    this.back();
   }
 
   public delete(): void {
     const { id, foodID, mealID, quantity } = this.originalPortion;
     this.planner.removePortion(this.date, { id, foodID, mealID, quantity }).then(() => {
       this.notifyDeletedPortion(this.originalPortion);
-      this.router.navigate(['../..'], { relativeTo: this.route });
+      this.back();
     });
   }
 
