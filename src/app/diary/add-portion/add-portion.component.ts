@@ -53,7 +53,7 @@ export class AddPortionComponent implements OnInit {
     const dialog = this.dialog.open(AddPortionDialogComponent, {
       data: {
         food: food,
-        currentMeals$: this.plannerService.getCurrentMeals(this.dateURL),
+        currentMeals$: this.plannerService.getRecordedMeals(this.dateURL),
       }
     });
 

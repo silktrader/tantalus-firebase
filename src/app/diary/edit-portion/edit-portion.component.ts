@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
 import { MatSnackBar } from '@angular/material';
+import { UiService } from 'src/app/ui.service';
 
 
 @Component({
@@ -29,7 +30,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   public portionForm: FormGroup = new FormGroup(
     { quantity: this.quantitiesControl });
 
-  constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, public snackBar: MatSnackBar) { }
+  constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, private uiService: UiService) { }
 
   ngOnInit() {
 
@@ -116,20 +117,12 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     const message = (quantityDifference > 0) ?
       `Decreased ${initial.food.name}'s portion by ${quantityDifference}g.` :
       `Increased ${initial.food.name}'s portion by ${-quantityDifference}g.`;
-    const snackBarRef = this.snackBar.open(message, 'Undo', {
-      duration: 3000
-    });
-    snackBarRef.onAction().subscribe(() => {
-      this.changePortion(final, initial);
-    });
+
+    this.uiService.notify(message, 'Undo', () => this.changePortion(final, initial));
   }
 
   private notifyDeletedPortion(portion: Portion) {
-    const snackBarRef = this.snackBar.open(`Removed ${portion.food.name}`, 'Undo', {
-      duration: 3000
-    });
-    snackBarRef.onAction().subscribe(() => {
-
+    this.uiService.notify(`Removed ${portion.food.name}`, 'Undo', () => {
       // recreate old ID
       this.planner.addPortion(this.date, { id: portion.id, foodID: portion.food.id, quantity: portion.quantity, mealID: portion.mealID });
     });

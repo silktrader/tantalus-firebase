@@ -1,14 +1,16 @@
 <mat-toolbar color="primary">
-  <button class="toolbar-item" mat-icon-button (click)="uiService.openSidenav()">
+  <button class="toolbar-menu" mat-icon-button (click)="uiService.openSidenav()">
     <mat-icon>menu</mat-icon>
   </button>
   <h3 class="toolbar-title">{{date | date:'longDate'}}</h3>
-  <button class="toolbar-item" mat-icon-button (click)="deleteAll()">
-    <mat-icon>delete</mat-icon>
-  </button>
+  <span class="toolbar-actions">
+    <button *ngIf="hasContents" mat-icon-button (click)="deleteAll()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </span>
 </mat-toolbar>
 
-<ng-container *ngIf="meals !== undefined && meals.length > 0">
+<ng-container *ngIf="hasContents">
   <mat-accordion multi="true">
     <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
       <mat-expansion-panel-header>
