@@ -1,3 +1,15 @@
+<mat-toolbar color="primary">
+  <button class="toolbar-item" mat-icon-button (click)="back()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">
+    <h3>{{title}}</h3>
+  </span>
+  <button class="toolbar-actions" mat-icon-button (click)="clear()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-toolbar>
+
 <mat-tab-group>
 
   <mat-tab label="Search">
@@ -13,6 +25,7 @@
     </form>
 
     <section>
+      <mat-list></mat-list>
       <div class="search-items" *ngFor="let food of filteredFoods$ | async" (click)="openPortionDialog(food)">
         <span class="search-item-name">{{food.name}}</span>
         <span class="search-item-calories">{{food.approximateCalories}}</span>
@@ -21,7 +34,7 @@
 
     <mat-divider></mat-divider>
 
-    <section *ngIf="selectedPortions?.length > 0">
+    <!-- <section *ngIf="selectedPortions?.length > 0">
       To be added:
       <div *ngFor="let entry of selectedPortions">
         {{entry.food.name}} {{entry.quantity}}
@@ -33,7 +46,7 @@
 
     <button mat-icon-button (click)="registerPortions()">
       <mat-icon>add</mat-icon>
-    </button>
+    </button> -->
 
 
   </mat-tab>

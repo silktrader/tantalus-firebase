@@ -18,7 +18,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { DiarySummaryComponent } from './diary/diary-summary/diary-summary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
-import { AddPortionComponent } from './diary/add-portion/add-portion.component';
+import { SelectPortionComponent } from './diary/select-portion/select-portion.component';
 import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.component';
 import { AddPortionDialogComponent } from './diary/add-portion-dialog/add-portion-dialog.component';
 import { EditPortionComponent } from './diary/edit-portion/edit-portion.component';
@@ -34,7 +34,7 @@ import { EditPortionComponent } from './diary/edit-portion/edit-portion.componen
         DiarySummaryComponent,
         AddFoodComponent,
         EditFoodComponent,
-        AddPortionComponent,
+        SelectPortionComponent,
         DiaryOutletComponent,
         AddPortionDialogComponent,
         EditPortionComponent,

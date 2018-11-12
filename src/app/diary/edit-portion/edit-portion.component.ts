@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PlannerService, DateURL } from '../planner.service';
+import { PlannerService, DateYMD } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Meal } from 'src/app/models/meal';
 import { Portion } from 'src/app/models/portion';
@@ -7,7 +7,6 @@ import { Subscription, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
-import { MatSnackBar } from '@angular/material';
 import { UiService } from 'src/app/ui.service';
 
 
@@ -19,7 +18,6 @@ import { UiService } from 'src/app/ui.service';
 export class EditPortionComponent implements OnInit, OnDestroy {
 
   private id: string;
-  private date: DateURL;
   private subscription: Subscription;
 
   public originalPortion: Portion;
@@ -41,15 +39,8 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
     this.subscription = this.route.params.pipe(switchMap(params => {
 
-      if (this.route.parent === null)
-        return of();
-
-      const dateParams = this.route.parent.snapshot.params;
-
       this.id = params.portionID;
-      this.date = { year: dateParams.year, month: dateParams.month, day: dateParams.day };
-
-      return this.planner.getPortion(this.id, this.date);
+      return this.planner.getPortion(this.id);
     }
     )).subscribe(portion => {
       if (portion === undefined)
@@ -96,7 +87,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
   public delete(): void {
     const { id, foodID, mealID, quantity } = this.originalPortion;
-    this.planner.removePortion(this.date, { id, foodID, mealID, quantity }).then(() => {
+    this.planner.removePortion({ id, foodID, mealID, quantity }).then(() => {
       this.notifyDeletedPortion(this.originalPortion);
       this.back();
     });
@@ -104,7 +95,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
   private changePortion(initial: Portion, final: Portion): void {
     const { id, foodID, mealID } = initial;
-    this.planner.changePortion(this.date,
+    this.planner.changePortion(
       { id, foodID, mealID, quantity: initial.quantity },
       { id, foodID, mealID, quantity: final.quantity })
       .then(() => {
@@ -124,7 +115,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   private notifyDeletedPortion(portion: Portion) {
     this.uiService.notify(`Removed ${portion.food.name}`, 'Undo', () => {
       // recreate old ID
-      this.planner.addPortion(this.date, { id: portion.id, foodID: portion.food.id, quantity: portion.quantity, mealID: portion.mealID });
+      this.planner.addPortion({ id: portion.id, foodID: portion.food.id, quantity: portion.quantity, mealID: portion.mealID });
     });
   }
 

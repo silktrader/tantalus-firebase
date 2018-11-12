@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Food } from '../../foods/food';
 import { Meal } from '../../models/meal';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { PlannerService, DateURL } from '../planner.service';
+import { PlannerService, DateYMD } from '../planner.service';
 import { Observable, Subscription, of } from 'rxjs';
 import { Portion } from 'src/app/models/portion';
 import { switchMap, tap, map } from 'rxjs/operators';
@@ -18,30 +18,26 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   public open = false;
   public spin = false;
 
-  private meals: Meal[];
+  private meals: ReadonlyArray<Meal>;
   private subscription: Subscription;
-  private date: Date;
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService, public uiService: UiService) { }
 
   ngOnInit() {
-    this.subscription = this.route.params.pipe(
-      switchMap((params: Params) => {
-        const { year, month, day } = params;
-        // tk verify date first then verify meals
-        this.date = new Date(year, month - 1, day);
-        return this.plannerService.getMeals({ year, month, day });
-      })).subscribe((meals) => {
+    this.subscription = this.plannerService.meals.subscribe(meals => {
+      if (meals === undefined)
+        return;
 
-        if (meals === undefined)
-          return;
-
-        this.meals = meals;
-      });
+      this.meals = meals;
+    });
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  public get date(): Readonly<Date> {
+    return this.plannerService.date;
   }
 
   public get hasContents(): boolean {
@@ -62,13 +58,11 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
 
   public deleteAll(): void {
 
-    const dateURL: DateURL = { year: this.date.getFullYear(), month: this.date.getMonth() + 1, day: this.date.getDate() };
-
-    this.plannerService.deleteDay(dateURL).subscribe(result => {
+    this.plannerService.deleteDay().subscribe(result => {
       if (result === undefined)
         this.uiService.warn(`Couldn't delete ${this.date.toLocaleDateString()}'s entries`);
       else this.uiService.notify(`Deleted ${this.date.toLocaleDateString()}'s entries`, 'Undo', () => {
-        this.plannerService.writeDay(dateURL, result);
+        this.plannerService.writeDay(result);
         this.uiService.warn(`Restored ${this.date.toLocaleDateString()}'s entries`);
       });
     });

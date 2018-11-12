@@ -7,7 +7,7 @@ import { FoodsComponent } from '../foods/foods.component';
 import { AddFoodComponent } from '../foods/add-food/add-food.component';
 import { EditFoodComponent } from '../foods/edit-food/edit-food.component';
 import { DiarySummaryComponent } from '../diary/diary-summary/diary-summary.component';
-import { AddPortionComponent } from '../diary/add-portion/add-portion.component';
+import { SelectPortionComponent } from '../diary/select-portion/select-portion.component';
 import { DiaryOutletComponent } from '../diary/diary-outlet/diary-outlet.component';
 import { EditPortionComponent } from '../diary/edit-portion/edit-portion.component';
 
@@ -22,7 +22,7 @@ const routes: Routes = [
     children: [
       // { path: 'summary', component: DiarySummaryComponent },
       { path: '', component: DiarySummaryComponent },
-      { path: 'add-portion', component: AddPortionComponent },
+      { path: 'add-portion', component: SelectPortionComponent },
       { path: 'edit-portion/:portionID', component: EditPortionComponent }
     ]
   },
