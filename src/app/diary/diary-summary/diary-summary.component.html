@@ -15,7 +15,7 @@
     <mat-expansion-panel [expanded]="true" *ngFor="let meal of meals">
       <mat-expansion-panel-header>
         <span class="meal-header">
-          <h3 class="meal-header-order">{{getMealName(meal.order)}}</h3>
+          <h3 class="meal-header-order">{{meal.name}}</h3>
           <h4 class="meal-header-calories">{{meal.calories | number:'1.0-0'}}</h4>
         </span>
       </mat-expansion-panel-header>

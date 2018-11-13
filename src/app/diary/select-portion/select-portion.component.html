@@ -2,12 +2,21 @@
   <button class="toolbar-item" mat-icon-button (click)="back()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span class="toolbar-title">
-    <h3>{{title}}</h3>
-  </span>
-  <button class="toolbar-actions" mat-icon-button (click)="clear()">
-    <mat-icon>delete</mat-icon>
-  </button>
+
+  <mat-form-field>
+    <mat-select [formControl]="mealSelector">
+      <mat-optgroup *ngIf="planner.recordedMeals?.length > 0" label="Recorded">
+        <mat-option *ngFor="let recordedMeal of planner.recordedMeals" [value]="recordedMeal">
+          {{planner.getMealName(recordedMeal)}}
+        </mat-option>
+      </mat-optgroup>
+      <mat-optgroup *ngIf="planner.availableMeals?.length > 0" label="New">
+        <mat-option *ngFor="let newMeal of planner.availableMeals" [value]="newMeal">
+          {{planner.getMealName(newMeal)}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
 </mat-toolbar>
 
 <mat-tab-group>
@@ -25,29 +34,16 @@
     </form>
 
     <section>
-      <mat-list></mat-list>
-      <div class="search-items" *ngFor="let food of filteredFoods$ | async" (click)="openPortionDialog(food)">
-        <span class="search-item-name">{{food.name}}</span>
-        <span class="search-item-calories">{{food.approximateCalories}}</span>
-      </div>
+      <mat-list>
+        <a mat-list-item class="search-items" *ngFor="let food of filteredFoods$ | async" [routerLink]="[food.id]"
+          routerLinkActive="active">
+          <span class="search-item-name">{{food.name}}</span>
+          <span class="search-item-calories">{{food.approximateCalories}}</span>
+        </a>
+      </mat-list>
     </section>
 
     <mat-divider></mat-divider>
-
-    <!-- <section *ngIf="selectedPortions?.length > 0">
-      To be added:
-      <div *ngFor="let entry of selectedPortions">
-        {{entry.food.name}} {{entry.quantity}}
-        <button mat-icon-button (click)="deletePortion(entry)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </section>
-
-    <button mat-icon-button (click)="registerPortions()">
-      <mat-icon>add</mat-icon>
-    </button> -->
-
 
   </mat-tab>
 

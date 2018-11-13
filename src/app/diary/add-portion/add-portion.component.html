@@ -1,0 +1,65 @@
+<mat-toolbar class="toolbar" color="primary" class="mat-typography">
+  <a class="toolbar-item" mat-icon-button [routerLink]="[ '../']">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <span class="toolbar-item toolbar-title">
+    <h3>Add Portion</h3>
+  </span>
+</mat-toolbar>
+
+<ng-container *ngIf="food !== undefined">
+  <mat-card>
+    <mat-card-header class="header">
+      <mat-card-title>{{food.name}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="summary">
+      <section class="macronutrients">
+        <div class="macronutrients-section">
+          <span class="macronutrients-number">{{previewedPortion.calories}}</span>
+          <span class="macronutrients-label">Calories</span>
+        </div>
+        <div class="macronutrients-section">
+          <span class="macronutrients-number">{{previewedPortion.proteins}}</span>
+          <span class="macronutrients-label">Proteins</span>
+        </div>
+        <div class="macronutrients-section">
+          <span class="macronutrients-number">{{previewedPortion.carbs}}</span>
+          <span class="macronutrients-label">Carbs</span>
+        </div>
+        <div class="macronutrients-section">
+          <span class="macronutrients-number">{{previewedPortion.fats}}</span>
+          <span class="macronutrients-label">Fats</span>
+        </div>
+      </section>
+
+      <section class="inputs">
+        <mat-form-field class="quantity" [formGroup]="portionForm">
+          <section>
+            <input class="quantity-editor" matInput type="number" autocomplete="off" formControlName="quantity" />
+            <span matSuffix class="quantity-unit">grams</span>
+            <mat-error *ngIf="quantitiesControl.invalid">{{getQuantitiesControlError()}}</mat-error>
+          </section>
+
+        </mat-form-field>
+      </section>
+
+      <section class="buttons mat-typography">
+        <button type="submit" (click)="save()" color="primary" mat-raised-button [disabled]="saveDisabled">Save</button>
+        <mat-select [formControl]="mealSelector">
+          <mat-optgroup *ngIf="planner.recordedMeals?.length > 0" label="Recorded">
+            <mat-option *ngFor="let recordedMeal of planner.recordedMeals" [value]="recordedMeal">
+              {{planner.getMealName(recordedMeal)}}
+            </mat-option>
+          </mat-optgroup>
+          <mat-optgroup *ngIf="planner.availableMeals?.length > 0" label="New">
+            <mat-option *ngFor="let availableMeal of planner.availableMeals" [value]="availableMeal">
+              {{planner.getMealName(availableMeal)}}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </section>
+    </mat-card-content>
+
+
+  </mat-card>
+</ng-container>

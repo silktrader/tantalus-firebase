@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, switchMap, take, share } from 'rxjs/operators';
+import { map, switchMap, take, share, shareReplay } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
@@ -10,6 +10,7 @@ import { Meal } from '../models/meal';
 import { Food } from '../foods/food';
 import { Portion } from '../models/portion';
 import { FoodsService } from '../foods.service';
+import * as shortid from 'shortid';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
@@ -17,8 +18,12 @@ export class PlannerService {
   private dateYMD: DateYMD;
   private _date: Date;
   private document: AngularFirestoreDocument<IDiaryEntry>;
-
   private _meals: Observable<ReadonlyArray<Meal>>;
+
+  private _recordedMeals: number[] = [];
+  private _availableMeals: number[] = [];
+
+  public focusedMeal = 0;
 
   constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private readonly foodService: FoodsService) { }
 
@@ -28,6 +33,15 @@ export class PlannerService {
     this.document = this.getDocument(this.dateYMD);
 
     this._meals = this.getMeals();     // tk change to subject?
+
+    this._meals.subscribe(meals => {
+
+      if (meals === undefined)
+        return;
+
+      this._recordedMeals = meals.map(meal => meal.order);
+      this._availableMeals = [0, 1, 2, 3, 4, 5].filter(index => this._recordedMeals.indexOf(index) < 0);
+    });
   }
 
   private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
@@ -41,6 +55,14 @@ export class PlannerService {
 
   public get meals(): Observable<ReadonlyArray<Meal>> {
     return this._meals;
+  }
+
+  public get recordedMeals(): ReadonlyArray<number> {
+    return this._recordedMeals;
+  }
+
+  public get availableMeals(): ReadonlyArray<number> {
+    return this._availableMeals;
   }
 
   public getLastMeal(): Observable<number> {
@@ -68,7 +90,7 @@ export class PlannerService {
           return combineLatest(foods$);
         }),
         map(foods => this.createMeals(portions, foods)),
-        share()
+        shareReplay(1)
       );
   }
 
@@ -77,6 +99,9 @@ export class PlannerService {
 
     for (let i = 0; i < portions.length; i++) {
       const { id, quantity, mealID, foodID } = portions[i];
+
+      if (id === undefined)
+        continue; // tk
 
       if (meals[mealID] === undefined)
         meals[mealID] = new Meal(mealID);
@@ -92,6 +117,10 @@ export class PlannerService {
     return meals
       .filter(meal => meal !== undefined)
       .sort((a: Meal, b: Meal) => a.order - b.order);
+  }
+
+  public getMealName(index: number) {
+    return Meal.getName(index);
   }
 
   public getPortion(portionID: string): Observable<Portion | undefined> {
@@ -113,11 +142,16 @@ export class PlannerService {
       ));
   }
 
-  public addPortion(portionData: PortionData) {
-    (<any>this.document).set(
-      { portions: firestore.FieldValue.arrayUnion(portionData) },
+  public addPortion(portionData: PortionData): Promise<PortionData> {
+
+    // generate a short ID and append it to the portion data
+    const portionDataID = { id: shortid.generate(), ...portionData };
+
+    // do not rewrite the entire document but add to its portions array
+    return (<any>this.document).set(
+      { portions: firestore.FieldValue.arrayUnion(portionDataID) },
       { merge: true }
-    );
+    ).then(() => portionDataID);
   }
 
   public changePortion(removedPortion: PortionData, newPortion: PortionData): Promise<[void, void]> {
@@ -134,6 +168,7 @@ export class PlannerService {
   }
 
   public removePortion(removedPortion: PortionData): Promise<void> {
+    console.log('del ' + removedPortion);
     return (<any>this.document).set(
       { portions: firestore.FieldValue.arrayRemove(removedPortion) },
       { merge: true }
@@ -157,28 +192,6 @@ export class PlannerService {
 
   public writeDay(entry: IDiaryEntry): Promise<void> {
     return this.document.set(entry);
-  }
-
-  // tk turn into static?
-  public getMealName(index: number, total: number): string {
-    if (index === 0) return 'Breakfast';
-
-    if (index === 1) {
-      if (total > 2) return 'Morning Snack';
-      return 'Lunch';
-    }
-
-    if (index === 2) {
-      if (total > 3) return 'Lunch';
-      return 'Dinner';
-    }
-
-    if (index === 4) {
-      if (total === 4) return 'Dinner';
-      return 'Afternoon Snack';
-    }
-
-    return 'Dinner';
   }
 }
 

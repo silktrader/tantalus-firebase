@@ -10,6 +10,7 @@ import { DiarySummaryComponent } from '../diary/diary-summary/diary-summary.comp
 import { SelectPortionComponent } from '../diary/select-portion/select-portion.component';
 import { DiaryOutletComponent } from '../diary/diary-outlet/diary-outlet.component';
 import { EditPortionComponent } from '../diary/edit-portion/edit-portion.component';
+import { AddPortionComponent } from '../diary/add-portion/add-portion.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,8 +21,8 @@ const routes: Routes = [
   {
     path: 'diary/:year/:month/:day', component: DiaryOutletComponent, canActivate: [AuthGuard],
     children: [
-      // { path: 'summary', component: DiarySummaryComponent },
       { path: '', component: DiarySummaryComponent },
+      { path: 'add-portion/:foodID', component: AddPortionComponent },
       { path: 'add-portion', component: SelectPortionComponent },
       { path: 'edit-portion/:portionID', component: EditPortionComponent }
     ]

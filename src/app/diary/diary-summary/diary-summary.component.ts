@@ -5,7 +5,6 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PlannerService, DateYMD } from '../planner.service';
 import { Observable, Subscription, of } from 'rxjs';
 import { Portion } from 'src/app/models/portion';
-import { switchMap, tap, map } from 'rxjs/operators';
 import { UiService } from 'src/app/ui.service';
 
 @Component({
@@ -29,6 +28,9 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
         return;
 
       this.meals = meals;
+
+      // meals are sorted in the observable, set the last meal as the default one to new additions - tk move this into planner?
+      this.plannerService.focusedMeal = this.meals[this.meals.length - 1].order;
     });
   }
 
@@ -50,10 +52,6 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
 
   public addMeal() {
     this.router.navigate(['add-portion'], { relativeTo: this.route });
-  }
-
-  public getMealName(index: number) {
-    return this.plannerService.getMealName(index, 1 + Math.max(...this.meals.map(meal => meal.order)));
   }
 
   public deleteAll(): void {

@@ -20,7 +20,7 @@ import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
 import { SelectPortionComponent } from './diary/select-portion/select-portion.component';
 import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.component';
-import { AddPortionDialogComponent } from './diary/add-portion-dialog/add-portion-dialog.component';
+import { AddPortionComponent } from './diary/add-portion/add-portion.component';
 import { EditPortionComponent } from './diary/edit-portion/edit-portion.component';
 
 @NgModule({
@@ -36,7 +36,7 @@ import { EditPortionComponent } from './diary/edit-portion/edit-portion.componen
         EditFoodComponent,
         SelectPortionComponent,
         DiaryOutletComponent,
-        AddPortionDialogComponent,
+        AddPortionComponent,
         EditPortionComponent,
     ],
     imports: [
@@ -48,9 +48,6 @@ import { EditPortionComponent } from './diary/edit-portion/edit-portion.componen
         CoreModule,
         BrowserAnimationsModule,
         MaterialModule,
-    ],
-    entryComponents: [
-        AddPortionDialogComponent
     ],
     providers: [],
     bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 export interface PortionData {
-    id: string;
+    id?: string;
     mealID: number;
     foodID: string;
     quantity: number;

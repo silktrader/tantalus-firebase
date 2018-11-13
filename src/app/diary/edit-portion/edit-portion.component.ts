@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlannerService, DateYMD } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Meal } from 'src/app/models/meal';
 import { Portion } from 'src/app/models/portion';
-import { Subscription, Observable, of } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
@@ -91,6 +90,26 @@ export class EditPortionComponent implements OnInit, OnDestroy {
       this.notifyDeletedPortion(this.originalPortion);
       this.back();
     });
+  }
+
+  private checkPreview(preview: string): string {
+    return this.portionForm.valid ? preview : '…';
+  }
+
+  public get previewCalories(): string {
+    return this.checkPreview(this.previewedPortion.calories.toFixed(0) + ' kcal');
+  }
+
+  public get previewProteins(): string {
+    return this.checkPreview(this.previewedPortion.proteins.toFixed(1) + ' g.');
+  }
+
+  public get previewCarbs(): string {
+    return this.checkPreview(this.previewedPortion.carbs.toFixed(1) + ' g.');
+  }
+
+  public get previewFats(): string {
+    return this.checkPreview(this.previewedPortion.fats.toFixed(1) + ' g.');
   }
 
   private changePortion(initial: Portion, final: Portion): void {

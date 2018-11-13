@@ -18,19 +18,19 @@
     <mat-card-content class="summary">
       <section class="macronutrients">
         <div class="macronutrients-section">
-          <span class="macronutrients-number">{{portionForm.valid ? previewedPortion.calories + ' kcal': "…"}}</span>
+          <span class="macronutrients-number">{{previewCalories}}</span>
           <span class="macronutrients-label">Calories</span>
         </div>
         <div class="macronutrients-section">
-          <span class="macronutrients-number">{{portionForm.valid ? previewedPortion.proteins + ' g.' : "…"}}</span>
+          <span class="macronutrients-number">{{previewProteins}}</span>
           <span class="macronutrients-label">Proteins</span>
         </div>
         <div class="macronutrients-section">
-          <span class="macronutrients-number">{{portionForm.valid ? previewedPortion.carbs + ' g.' : "…"}}</span>
+          <span class="macronutrients-number">{{previewCarbs}}</span>
           <span class="macronutrients-label">Carbs</span>
         </div>
         <div class="macronutrients-section">
-          <span class="macronutrients-number">{{portionForm.valid ? previewedPortion.fats + ' g.' : "…"}}</span>
+          <span class="macronutrients-number">{{previewFats}}</span>
           <span class="macronutrients-label">Fats</span>
         </div>
       </section>

@@ -2,6 +2,10 @@ mat-card {
     margin: 3%;
 }
 
+mat-select {
+    max-width: 15ch;
+}
+
 .header {
     display: flex;
     width: 100%;
@@ -22,14 +26,12 @@ mat-card {
 }
 
 .quantity {
-    min-width: 8ch;
-    max-width: 10ch;
-    width: 100%;
+    max-width: 12ch;
     font-weight: bold;
 }
 
 .quantity-editor {
-    max-width: 5ch;
+    max-width: 6ch;
 }
 
 .quantity-unit {
@@ -64,7 +66,8 @@ mat-card {
 .buttons {
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
+    align-items: baseline;
     margin-top: 10%;
 }
 

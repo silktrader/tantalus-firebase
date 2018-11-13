@@ -1,31 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { FoodsService } from 'src/app/foods.service';
 import { Food } from 'src/app/foods/food';
-import { Observable } from 'rxjs';
-import { MatDialog } from '@angular/material';
-import { AddPortionDialogComponent, AddPortionDialogData } from '../add-portion-dialog/add-portion-dialog.component';
+import { Observable, Subscription } from 'rxjs';
 import { PlannerService, DateYMD } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as shortid from 'shortid';
+import { Meal } from 'src/app/models/meal';
 
 @Component({
   selector: 'app-select-portion',
   templateUrl: './select-portion.component.html',
   styleUrls: ['./select-portion.component.css']
 })
-export class SelectPortionComponent implements OnInit {
+export class SelectPortionComponent implements OnInit, OnDestroy {
 
   searchBox: FormControl = new FormControl();
 
   filteredFoods$: Observable<Food[]>;
   startAt$: BehaviorSubject<string> = new BehaviorSubject('');
 
-  private dateURL: DateYMD;
+  public mealSelector: FormControl = new FormControl();
 
-  constructor(private readonly foodsService: FoodsService, private readonly plannerService: PlannerService,
-    private dialog: MatDialog, private route: ActivatedRoute, private router: Router) { }
+  private subscription = new Subscription();
+
+  constructor(private readonly foodsService: FoodsService, public readonly planner: PlannerService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
 
@@ -36,14 +35,13 @@ export class SelectPortionComponent implements OnInit {
       return; // tk throw error warn user about wrong URL
     }
 
-    this.route.parent.params.subscribe(params => {
-      this.dateURL = { year: params.year, month: params.month, day: params.day };
-    });
+    this.mealSelector.setValue(this.planner.focusedMeal);
+
+    this.subscription.add(this.mealSelector.valueChanges.subscribe(value => this.planner.focusedMeal = value));
   }
 
-  public get title(): string {
-    const date = new Date(this.dateURL.year, this.dateURL.month, this.dateURL.day);
-    return `New portions for ${date.toLocaleDateString()}`;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   public back(): void {
@@ -56,33 +54,7 @@ export class SelectPortionComponent implements OnInit {
     this.startAt$.next(inputText);
   }
 
-  // openPortionDialog(food: Food): void {
-
-  //   const dialog = this.dialog.open(AddPortionDialogComponent, {
-  //     data: {
-  //       food: food,
-  //       currentMeals$: this.plannerService.getRecordedMeals(this.dateURL),
-  //     }
-  //   });
-
-  //   dialog.afterClosed().subscribe((data: AddPortionDialogData) => {
-  //     if (data === undefined)
-  //       return;
-  //     this.selectedPortions.push({ food: data.food, quantity: data.quantity, mealID: data.mealID });
-  //   });
-  // }
-
-  // deletePortion(portionData: AddPortionDialogData): void {
-  //   this.selectedPortions.splice(this.selectedPortions.indexOf(portionData), 1);
-  // }
-
-  // registerPortions() {
-  //   for (let i = 0; i < this.selectedPortions.length; i++) {
-  //     const data = this.selectedPortions[i];
-  //     this.plannerService.addPortion(this.dateURL, { id: shortid.generate(), foodID: data.food.id, quantity: data.quantity, mealID: data.mealID });
-  //     // tk move shortid into service
-  //   }
-
-  //   this.back();
-  // }
+  proceedWithSelection(food: Food): void {
+    this.router.navigate([`/${food.id}`]);
+  }
 }
