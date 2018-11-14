@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, switchMap, take, share, shareReplay } from 'rxjs/operators';
+import { map, switchMap, take, shareReplay } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
-import { FoodData, FoodDataID } from '../FoodData';
+import { FoodData } from '../FoodData';
 import { PortionData } from './PortionData';
 import { Meal } from '../models/meal';
 import { Food } from '../foods/food';
@@ -15,39 +15,17 @@ import * as shortid from 'shortid';
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
 
+  constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private readonly foodService: FoodsService) { }
+
+  // should this be configurable by users? tk
+  public static availableMealsIDS = [0, 1, 2, 3, 4, 5];
+
   private dateYMD: DateYMD;
   private _date: Date;
   private document: AngularFirestoreDocument<IDiaryEntry>;
   private _meals: Observable<ReadonlyArray<Meal>>;
 
-  private _recordedMeals: number[] = [];
-  private _availableMeals: number[] = [];
-
   public focusedMeal = 0;
-
-  constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private readonly foodService: FoodsService) { }
-
-  public initialise(dateYMD: DateYMD) {
-    this.dateYMD = dateYMD;
-    this._date = new Date(dateYMD.year, dateYMD.month - 1, dateYMD.day);
-    this.document = this.getDocument(this.dateYMD);
-
-    this._meals = this.getMeals();     // tk change to subject?
-
-    this._meals.subscribe(meals => {
-
-      if (meals === undefined)
-        return;
-
-      this._recordedMeals = meals.map(meal => meal.order);
-      this._availableMeals = [0, 1, 2, 3, 4, 5].filter(index => this._recordedMeals.indexOf(index) < 0);
-    });
-  }
-
-  private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
-    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`
-    );
-  }
 
   public get date(): Readonly<Date> {
     return this._date;
@@ -57,12 +35,25 @@ export class PlannerService {
     return this._meals;
   }
 
-  public get recordedMeals(): ReadonlyArray<number> {
-    return this._recordedMeals;
+  public initialise(dateYMD: DateYMD) {
+    this.dateYMD = dateYMD;
+    this._date = new Date(dateYMD.year, dateYMD.month - 1, dateYMD.day);
+    this.document = this.getDocument(this.dateYMD);
+
+    this._meals = this.getMeals();     // tk change to subject?
   }
 
-  public get availableMeals(): ReadonlyArray<number> {
-    return this._availableMeals;
+  private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
+    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`
+    );
+  }
+
+  public getRecordedMeals(): Observable<ReadonlyArray<number>> {
+    return this._meals.pipe(map(meals => {
+      if (meals === undefined)
+        return [];
+      return meals.map(meal => meal.order);
+    }));
   }
 
   public getLastMeal(): Observable<number> {
@@ -90,7 +81,7 @@ export class PlannerService {
           return combineLatest(foods$);
         }),
         map(foods => this.createMeals(portions, foods)),
-        shareReplay(1)
+        shareReplay(),
       );
   }
 
@@ -121,6 +112,18 @@ export class PlannerService {
 
   public getMealName(index: number) {
     return Meal.getName(index);
+  }
+
+  public getPortionsNumber(): Observable<number[]> {
+    return this._meals.pipe(
+      map(meals => {
+        const mealNumbers: number[] = [];
+        for (let i = 0; i < PlannerService.availableMealsIDS.length; i++) {
+          const number = meals[i] === undefined ? 0 : meals[i].portions.length;
+          mealNumbers.push(number);
+        }
+        return mealNumbers;
+      }));
   }
 
   public getPortion(portionID: string): Observable<Portion | undefined> {
@@ -168,10 +171,8 @@ export class PlannerService {
   }
 
   public removePortion(removedPortion: PortionData): Promise<void> {
-    console.log('del ' + removedPortion);
-    return (<any>this.document).set(
-      { portions: firestore.FieldValue.arrayRemove(removedPortion) },
-      { merge: true }
+    return (<any>this.document).update(
+      { portions: firestore.FieldValue.arrayRemove(removedPortion) }
     );
   }
 

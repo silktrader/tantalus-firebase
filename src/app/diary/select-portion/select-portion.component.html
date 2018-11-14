@@ -5,16 +5,16 @@
 
   <mat-form-field>
     <mat-select [formControl]="mealSelector">
-      <mat-optgroup *ngIf="planner.recordedMeals?.length > 0" label="Recorded">
-        <mat-option *ngFor="let recordedMeal of planner.recordedMeals" [value]="recordedMeal">
-          {{planner.getMealName(recordedMeal)}}
-        </mat-option>
-      </mat-optgroup>
-      <mat-optgroup *ngIf="planner.availableMeals?.length > 0" label="New">
-        <mat-option *ngFor="let newMeal of planner.availableMeals" [value]="newMeal">
-          {{planner.getMealName(newMeal)}}
-        </mat-option>
-      </mat-optgroup>
+      <mat-select-trigger>
+        <span class="select-entry">
+          <span>{{planner.getMealName(mealSelector.value)}}</span><span class="meals-number">({{mealNumbers[mealSelector.value]}})</span>
+        </span>
+      </mat-select-trigger>
+      <mat-option *ngFor="let availableMeal of availableMeals" [value]="availableMeal">
+        <span class="select-entry">
+          <span>{{planner.getMealName(availableMeal)}}</span><span class="meals-number">({{mealNumbers[availableMeal]}})</span>
+        </span>
+      </mat-option>
     </mat-select>
   </mat-form-field>
 </mat-toolbar>

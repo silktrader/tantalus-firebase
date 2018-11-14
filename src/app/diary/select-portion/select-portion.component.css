@@ -37,3 +37,13 @@ mat-form-field.search {
 .search-items:active {
   background: #efefef;
 }
+
+span.select-entry {
+    display: flex;
+    justify-content: space-between;
+}
+
+.meals-number {
+    font-style: italic;
+    padding-right: 1ch;
+}

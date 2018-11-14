@@ -4,9 +4,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { FoodsService } from 'src/app/foods.service';
 import { Food } from 'src/app/foods/food';
 import { Observable, Subscription } from 'rxjs';
-import { PlannerService, DateYMD } from '../planner.service';
+import { PlannerService } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Meal } from 'src/app/models/meal';
 
 @Component({
   selector: 'app-select-portion',
@@ -21,6 +20,8 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   startAt$: BehaviorSubject<string> = new BehaviorSubject('');
 
   public mealSelector: FormControl = new FormControl();
+
+  public mealNumbers: number[] = [];
 
   private subscription = new Subscription();
 
@@ -38,10 +39,17 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
     this.mealSelector.setValue(this.planner.focusedMeal);
 
     this.subscription.add(this.mealSelector.valueChanges.subscribe(value => this.planner.focusedMeal = value));
+    this.subscription.add(this.planner.getPortionsNumber().subscribe(mealNumbers => {
+      this.mealNumbers = mealNumbers;
+    }));
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  public get availableMeals(): ReadonlyArray<number> {
+    return PlannerService.availableMealsIDS;
   }
 
   public back(): void {
