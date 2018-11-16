@@ -5,7 +5,7 @@ import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 
 import { Food } from './foods/food';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
-import { FoodData, FoodDataID } from './FoodData';
+import { FoodData } from './FoodData';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +34,9 @@ export class FoodsService {
     return this.af.doc(`foods/${shortid.generate()}`).set(food);
   }
 
-  public editFood(food: FoodDataID) {
-    this.af.doc(`foods/${food.id}`).set(food);
+  public editFood(food: FoodData) {
+    const trimmedFood = { name: food.name, brand: food.brand, proteins: food.proteins, carbs: food.carbs, fats: food.fats };
+    this.af.doc(`foods/${food.id}`).set(trimmedFood, { merge: true });
   }
 
   public deleteFood(food: Food): Promise<void> {
@@ -45,11 +46,12 @@ export class FoodsService {
   public getFilteredFoods(start: BehaviorSubject<string>): Observable<Food[]> {
 
     return start.pipe(
-      switchMap(startText => {
-        const endText = startText + '\uf8ff';
+      switchMap(filterText => {
+        const text = filterText.toLowerCase();
+        const endText = text + '\uf8ff';
         return this.af.collection<FoodData>('foods', ref => ref
-          .orderBy('name')
-          .startAt(startText)     // used to transform to uppercase to approximate case insensitive query
+          .orderBy('searchableName')
+          .startAt(text)     // used to transform to uppercase to approximate case insensitive query
           .endAt(endText)
           .limit(10))
           .snapshotChanges();
