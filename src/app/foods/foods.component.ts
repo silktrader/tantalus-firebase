@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
-  private dataSource: MatTableDataSource<Food> = new MatTableDataSource<Food>();
+  public dataSource: MatTableDataSource<Food> = new MatTableDataSource<Food>();
   private dataSubscription: Subscription;
 
   @ViewChild(MatSort) sort: MatSort;

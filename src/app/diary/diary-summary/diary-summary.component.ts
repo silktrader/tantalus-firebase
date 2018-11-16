@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Food } from '../../foods/food';
 import { Meal } from '../../models/meal';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { PlannerService, DateYMD } from '../planner.service';
-import { Observable, Subscription, of } from 'rxjs';
-import { Portion } from 'src/app/models/portion';
+import { PlannerService } from '../planner.service';
+import { Subscription } from 'rxjs';
 import { UiService } from 'src/app/ui.service';
 
 @Component({
@@ -17,7 +16,7 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   public open = false;
   public spin = false;
 
-  private meals: ReadonlyArray<Meal>;
+  public meals: ReadonlyArray<Meal>;
   private subscription: Subscription;
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService, public uiService: UiService) { }
