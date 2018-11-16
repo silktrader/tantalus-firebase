@@ -18,7 +18,9 @@ import {
   MatTabsModule,
   MatDialogModule,
   MatButtonToggleModule,
-  MatSelectModule
+  MatSelectModule,
+  MatRippleModule,
+  MatDividerModule
 } from '@angular/material';
 import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
 
@@ -43,7 +45,9 @@ import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
     MatTabsModule,
     MatDialogModule,
     MatButtonToggleModule,
-    MatSelectModule
+    MatSelectModule,
+    MatRippleModule,
+    MatDividerModule
   ],
   exports: [
     MatButtonModule,
@@ -64,7 +68,9 @@ import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
     MatTabsModule,
     MatDialogModule,
     MatButtonToggleModule,
-    MatSelectModule
+    MatSelectModule,
+    MatRippleModule,
+    MatDividerModule
   ],
   declarations: []
 })

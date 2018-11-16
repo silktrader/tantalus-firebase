@@ -19,34 +19,26 @@
   </mat-form-field>
 </mat-toolbar>
 
-<mat-tab-group>
+<form class="search-container">
+  <mat-form-field class="search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input type="search" matInput [formControl]="searchBox" autocomplete="off" (keyup)="search($event)">
+    <button matSuffix mat-icon-button (click)="searchBox.setValue('')">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</form>
 
-  <mat-tab label="Search">
-    <form>
-      <mat-form-field class="search" appearance="outline">
-        <mat-label>Search</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input type="search" matInput [formControl]="searchBox" autocomplete="off" (keyup)="search($event)">
-        <button matSuffix mat-icon-button>
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </form>
+<ng-container *ngIf="filteredFoods$ | async as filteredFoods">
+  <section *ngIf="filteredFoods.length > 0">
+    <div class="search-item" *ngFor="let food of filteredFoods" (click)="proceedWithSelection(food)" matRipple>
+      <mat-icon class="search-item-icon" matListIcon>bookmark</mat-icon>
+      <span class="search-item-name">{{food.name}}</span>
+      <span class="search-item-calories">{{food.approximateCalories}}</span>
+    </div>
+  </section>
 
-    <section>
-      <mat-list>
-        <a mat-list-item class="search-items" *ngFor="let food of filteredFoods$ | async" [routerLink]="[food.id]"
-          routerLinkActive="active">
-          <span class="search-item-name">{{food.name}}</span>
-          <span class="search-item-calories">{{food.approximateCalories}}</span>
-        </a>
-      </mat-list>
-    </section>
-
-    <mat-divider></mat-divider>
-
-  </mat-tab>
-
-  <mat-tab label="Recents">Recents</mat-tab>
-  <mat-tab label="Favourites">Favourites</mat-tab>
-</mat-tab-group>
+  <section *ngIf="filteredFoods.length === 0 && searchBox.value !== ''">
+    Nothing found
+  </section>
+</ng-container>

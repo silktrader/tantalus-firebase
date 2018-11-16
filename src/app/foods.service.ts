@@ -43,12 +43,13 @@ export class FoodsService {
   }
 
   public getFilteredFoods(start: BehaviorSubject<string>): Observable<Food[]> {
+
     return start.pipe(
       switchMap(startText => {
         const endText = startText + '\uf8ff';
         return this.af.collection<FoodData>('foods', ref => ref
           .orderBy('name')
-          .startAt(startText.toUpperCase())     // must transform to uppercase for both variants to be included
+          .startAt(startText)     // used to transform to uppercase to approximate case insensitive query
           .endAt(endText)
           .limit(10))
           .snapshotChanges();

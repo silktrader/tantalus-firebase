@@ -14,12 +14,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class SelectPortionComponent implements OnInit, OnDestroy {
 
-  searchBox: FormControl = new FormControl();
-
-  filteredFoods$: Observable<Food[]>;
+  public filteredFoods$: Observable<Food[]>;
   startAt$: BehaviorSubject<string> = new BehaviorSubject('');
 
   public mealSelector: FormControl = new FormControl();
+  public searchBox: FormControl = new FormControl();
 
   public mealNumbers: number[] = [];
 
@@ -57,12 +56,10 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   }
 
   search($event): void {
-    let inputText = $event.target.value;
-    inputText = inputText.toLowerCase();
-    this.startAt$.next(inputText);
+    this.startAt$.next($event.target.value);
   }
 
   proceedWithSelection(food: Food): void {
-    this.router.navigate([`/${food.id}`]);
+    this.router.navigate([food.id], { relativeTo: this.route });
   }
 }
