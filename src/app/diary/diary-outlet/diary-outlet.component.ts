@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DiaryEntry } from 'src/app/models/daily-plan';
 import { PlannerService } from '../planner.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';

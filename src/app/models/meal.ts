@@ -8,13 +8,6 @@ export class Meal {
         return this._portions;
     }
 
-    get calories(): number {
-        let totalCalories = 0;
-        for (let i = 0; i < this._portions.length; i++)
-            totalCalories += this._portions[i].food.calories * this._portions[i].quantity;
-        return totalCalories;
-    }
-
     private _portions: Portion[] = [];
 
     public get name(): string {
@@ -35,5 +28,28 @@ export class Meal {
     // tk handle duplicate portions with same id?
     public addPortion(portion: Portion) {
         this._portions.push(portion);
+    }
+
+    private getTotalMacronutrient(macro: string) {
+        let total = 0;
+        for (let i = 0; i < this._portions.length; i++)
+            total += this._portions[i].food[macro] * this._portions[i].quantity / 100;
+        return total;
+    }
+
+    public get calories(): number {
+        return this.getTotalMacronutrient('calories');
+    }
+
+    public get proteins(): number {
+        return this.getTotalMacronutrient('proteins');
+    }
+
+    public get carbs(): number {
+        return this.getTotalMacronutrient('carbs');
+    }
+
+    public get fats(): number {
+        return this.getTotalMacronutrient('fats');
     }
 }

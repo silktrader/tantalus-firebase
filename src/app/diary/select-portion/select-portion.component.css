@@ -74,3 +74,14 @@ span.select-entry {
     font-style: italic;
     padding-right: 1ch;
 }
+
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.no-results-message {
+    font-style: italic;
+    margin: 10%;
+}

@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
   { path: 'foods', component: FoodsComponent, canActivate: [AuthGuard] },
-  { path: 'addfood', component: AddFoodComponent, canActivate: [AuthGuard] },
+  { path: 'add-food', component: AddFoodComponent, canActivate: [AuthGuard] },
   { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
   {
     path: 'diary/:year/:month/:day', component: DiaryOutletComponent, canActivate: [AuthGuard],

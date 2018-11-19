@@ -5,6 +5,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PlannerService } from '../planner.service';
 import { Subscription } from 'rxjs';
 import { UiService } from 'src/app/ui.service';
+import { DiaryEntry } from 'src/app/models/diary-entry';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-diary-summary',
@@ -16,21 +18,33 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   public open = false;
   public spin = false;
 
+  public focus: string;
+
+  public columns: ReadonlyArray<string> = ['Calories', 'Macronutrients'];
+  public columnSelector = new FormControl();
+
   public meals: ReadonlyArray<Meal>;
-  private subscription: Subscription;
+  public diaryEntry: DiaryEntry;
+  private subscription: Subscription = new Subscription();
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService, public uiService: UiService) { }
 
   ngOnInit() {
-    this.subscription = this.plannerService.meals.subscribe(meals => {
+
+    // sets up the colums selector and specify a default value
+    this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.focus = value));
+    this.columnSelector.setValue(this.columns[0]);
+
+    this.subscription.add(this.plannerService.meals.subscribe(meals => {
       if (meals === undefined)
         return;
 
       this.meals = meals;
+      this.diaryEntry = new DiaryEntry(meals);
 
       // meals are sorted in the observable, set the last meal as the default one to new additions - tk move this into planner?
       this.plannerService.focusedMeal = this.meals[this.meals.length - 1].order;
-    });
+    }));
   }
 
   ngOnDestroy() {

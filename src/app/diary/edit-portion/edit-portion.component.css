@@ -2,10 +2,32 @@ mat-card {
     margin: 3%;
 }
 
+::ng-deep .mat-card-header-text {
+    width: 100%;
+}
+
 .header {
     display: flex;
     width: 100%;
     justify-content: center;
+    align-items: center;
+}
+
+.header-spacer {
+    flex-basis: 25%;
+}
+
+.header-title {
+    flex-basis: 50%;
+    align-items: center;
+    text-align: center;
+}
+
+.header-actions {
+    display: flex;
+    flex-basis: 25%;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .summary {

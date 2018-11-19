@@ -55,11 +55,20 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 
-  search($event): void {
+  public search($event): void {
     this.startAt$.next($event.target.value);
   }
 
-  proceedWithSelection(food: Food): void {
+  public resetSearch(): void {
+    this.searchBox.setValue('');
+    this.startAt$.next('');
+  }
+
+  public startFoodCreation(): void {
+    this.router.navigate(['/addfood']);
+  }
+
+  public proceedWithSelection(food: Food): void {
     this.router.navigate([food.id], { relativeTo: this.route });
   }
 }

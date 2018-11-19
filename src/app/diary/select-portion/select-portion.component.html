@@ -23,7 +23,7 @@
   <mat-form-field class="search" appearance="outline">
     <mat-label>Search</mat-label>
     <input type="search" matInput [formControl]="searchBox" autocomplete="off" (keyup)="search($event)">
-    <button matSuffix mat-icon-button (click)="searchBox.setValue('')">
+    <button matSuffix mat-icon-button (click)="resetSearch()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
@@ -38,7 +38,8 @@
     </div>
   </section>
 
-  <section *ngIf="filteredFoods.length === 0 && searchBox.value !== ''">
-    Nothing found
+  <section class="no-results" *ngIf="filteredFoods.length === 0 && searchBox.value !== ''">
+    <span class="no-results-message">No matching food found</span>
+    <button mat-raised-button color="primary" (click)="startFoodCreation()">New Food</button>
   </section>
 </ng-container>

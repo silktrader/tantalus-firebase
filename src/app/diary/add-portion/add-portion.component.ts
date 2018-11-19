@@ -68,12 +68,14 @@ export class AddPortionComponent implements OnInit, OnDestroy {
   public save(): void {
     const portionData = { mealID: this.mealSelector.value, foodID: this.food.id, quantity: this.quantitiesControl.value };
     this.planner.addPortion(portionData).then((data) => {
+      this.back();
       this.uiService.notify(`Added ${this.food.name} portion`, 'Undo', () => {
         this.planner.removePortion(data);
       });
-      this.back();
-    }
-    );
+    }).catch(error => {
+      console.log(error);
+      this.uiService.warn(`Couldn't record new portion`);
+    });
   }
 }
 

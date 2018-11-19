@@ -10,12 +10,12 @@ service cloud.firestore {
       allow update: if isAuthenticated() && meetsFoodSchema();
     }
 
-    match /users/{id}/diary {
-      allow create, delete, update: if isAuthenticatedUser(id);
+    match /users/{id}/diary/{entry} {
+      allow write: if isAuthenticatedUser(id);
     }
 
     function isAuthenticatedUser(id) {
-      return request.auth.ui == id;
+      return request.auth.uid == id;
     }
   
     function isAuthenticated() {
