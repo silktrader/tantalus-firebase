@@ -22,10 +22,10 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   public originalPortion: Portion;
   public previewedPortion: Portion;
 
-  public quantitiesControl = new FormControl('', [Validators.required, PortionQuantityValidator]);
+  public mealNumbers: number[] = [];
 
-  public portionForm: FormGroup = new FormGroup(
-    { quantity: this.quantitiesControl });
+  public quantitiesControl = new FormControl('', [Validators.required, PortionQuantityValidator]);
+  public mealSelector = new FormControl();
 
   constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, private uiService: UiService) { }
 
@@ -46,13 +46,22 @@ export class EditPortionComponent implements OnInit, OnDestroy {
         return;
 
       this.originalPortion = portion;
-      this.previewedPortion = portion;
+      this.previewedPortion = new Portion(portion.id, portion.quantity, portion.food, portion.mealID);
       this.quantitiesControl.setValue(this.originalPortion.quantity);
+      this.mealSelector.setValue(this.originalPortion.mealID);
 
     });
 
     this.subscription.add(this.quantitiesControl.valueChanges.subscribe((newQuantity: number) => {
-      this.previewedPortion = new Portion(this.originalPortion.id, newQuantity, this.originalPortion.food, this.originalPortion.mealID);
+      this.previewedPortion = new Portion(this.originalPortion.id, newQuantity, this.previewedPortion.food, this.previewedPortion.mealID);
+    }));
+
+    this.subscription.add(this.mealSelector.valueChanges.subscribe((newMealID: number) => {
+      this.previewedPortion = new Portion(this.originalPortion.id, this.previewedPortion.quantity, this.previewedPortion.food, newMealID);
+    }));
+
+    this.subscription.add(this.planner.getPortionsNumber().subscribe(mealNumbers => {
+      this.mealNumbers = mealNumbers;
     }));
   }
 
@@ -61,7 +70,12 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   }
 
   get saveDisabled(): boolean {
-    return !this.portionForm.valid || this.quantitiesControl.value === this.originalPortion.quantity;
+    return (!this.quantitiesControl.valid && !this.mealSelector.valid) ||
+      (this.quantitiesControl.value === this.originalPortion.quantity && this.mealSelector.value === this.originalPortion.mealID);
+  }
+
+  get portionUnchanged(): boolean {
+    return !this.quantitiesControl.dirty && this.mealSelector.value === this.originalPortion.mealID;
   }
 
   get title(): string {
@@ -74,6 +88,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
   public reset(): void {
     this.quantitiesControl.reset(this.originalPortion.quantity);
+    this.mealSelector.reset(this.originalPortion.mealID);
     this.previewedPortion = this.originalPortion;
   }
 
@@ -93,7 +108,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   }
 
   private checkPreview(preview: string): string {
-    return this.portionForm.valid ? preview : '…';
+    return this.quantitiesControl.valid ? preview : '…';
   }
 
   public get previewCalories(): string {
@@ -116,7 +131,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     const { id, foodID, mealID } = initial;
     this.planner.changePortion(
       { id, foodID, mealID, quantity: initial.quantity },
-      { id, foodID, mealID, quantity: final.quantity })
+      { id, foodID, mealID: final.mealID, quantity: final.quantity })
       .then(() => {
         this.notifyChangePortion(initial, final);
       });
@@ -124,9 +139,18 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
   private notifyChangePortion(initial: Portion, final: Portion) {
     const quantityDifference: number = initial.quantity - final.quantity;
-    const message = (quantityDifference > 0) ?
-      `Decreased ${initial.food.name}'s portion by ${quantityDifference}g.` :
-      `Increased ${initial.food.name}'s portion by ${-quantityDifference}g.`;
+    let message = `${initial.food.name}`;
+
+    if (initial.mealID !== final.mealID) {
+      message += ` moved to ${this.planner.getMealName(final.mealID)}`;
+      if (quantityDifference !== 0)
+        message += `, `;
+    }
+
+    if (quantityDifference > 0)
+      message += ` increased by ${quantityDifference}g.`;
+    else if (quantityDifference < 0)
+      message += ` decreased by ${-quantityDifference}g.`;
 
     this.uiService.notify(message, 'Undo', () => this.changePortion(final, initial));
   }

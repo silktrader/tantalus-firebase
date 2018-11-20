@@ -2,6 +2,17 @@ import { Portion } from './portion';
 
 export class Meal {
 
+    public static mealNames: ReadonlyArray<string> = [
+        'Breakfast',
+        'Morning',
+        'Lunch',
+        'Afternoon',
+        'Dinner',
+        'Snacks',
+    ];
+
+    public static mealIDs: ReadonlyArray<number> = Array.from(Meal.mealNames.keys());
+
     constructor(public readonly order: number) { }
 
     get portions(): ReadonlyArray<Portion> {
@@ -15,14 +26,7 @@ export class Meal {
     }
 
     public static getName(order: number): string {
-        switch (order) {
-            case 0: return 'Breakfast';
-            case 1: return 'Morning';
-            case 2: return 'Lunch';
-            case 3: return 'Afternoon';
-            case 4: return 'Dinner';
-            default: return 'Snacks';
-        }
+        return this.mealNames[order];
     }
 
     // tk handle duplicate portions with same id?

@@ -2,20 +2,51 @@ mat-card {
     margin: 3%;
 }
 
-mat-select {
-    max-width: 15ch;
+.toolbar {
+    justify-content: space-between;
+}
+
+.toolbar-item {
+    flex: 1 1 auto;
+}
+
+.toolbar-title {
+    flex-grow: 8;
+    text-align: center;
+}
+
+::ng-deep .mat-card-header-text {
+    width: 100%;
 }
 
 .header {
     display: flex;
     width: 100%;
     justify-content: center;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    flex-basis: 25%;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.header-title {
+    flex-basis: 50%;
+    align-items: center;
+    text-align: center;
+}
+
+.header-right {
+    display: flex;
+    flex-basis: 25%;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .summary {
-    /* display: flex;
-    justify-content: center;
-    flex-direction: column; */
     width: 100%;
 }
 
@@ -26,16 +57,19 @@ mat-select {
 }
 
 .quantity {
-    max-width: 12ch;
-    font-weight: bold;
+    width: 10ch;
 }
 
 .quantity-editor {
-    max-width: 6ch;
+    width: 5ch;
 }
 
 .quantity-unit {
     font-style: italic;    
+}
+
+.meal-selector {
+    width: 12ch;
 }
 
 .macronutrients {
@@ -69,17 +103,4 @@ mat-select {
     justify-content: space-around;
     align-items: baseline;
     margin-top: 10%;
-}
-
-.toolbar {
-    justify-content: space-between;
-}
-
-.toolbar-item {
-    flex: 1 1 auto;
-}
-
-.toolbar-title {
-    flex-grow: 8;
-    text-align: center;
 }

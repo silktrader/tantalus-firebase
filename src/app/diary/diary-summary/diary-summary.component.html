@@ -5,7 +5,7 @@
   <h3 class="toolbar-title">{{date | date:'longDate'}}</h3>
   <span class="toolbar-actions">
     <button *ngIf="hasContents" mat-icon-button (click)="deleteAll()">
-      <mat-icon>delete</mat-icon>
+      <mat-icon>delete_sweep</mat-icon>
     </button>
   </span>
 </mat-toolbar>
@@ -13,17 +13,19 @@
 <ng-container *ngIf="hasContents">
 
   <!-- Header -->
-  <mat-form-field class="columns-selector">
-    <mat-select [formControl]="columnSelector" required>
-      <mat-option *ngFor="let column of columns" [value]="column">{{column}}</mat-option>
-    </mat-select>
-  </mat-form-field>
 
   <section class="header">
+    <section class="header-notes">
+      <mat-form-field class="columns-selector">
+        <mat-select [formControl]="columnSelector" required>
+          <mat-option *ngFor="let column of columns" [value]="column">{{column}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
 
     <!-- Macronutrients header -->
     <ng-container *ngIf="focus == 'Macronutrients'">
-      <section class="header-notes"></section>
+
       <section class="header-columns">
         <section class="header-macro-column">
           <span class="mat-caption header-macro-label">Prot.</span>
@@ -42,7 +44,6 @@
 
     <!-- Calories header -->
     <ng-container *ngIf="focus == 'Calories'">
-      <section class="header-notes"></section>
       <section class="header-columns">
         <span class="meal-header-aggregate calories">{{diaryEntry.calories | number:'1.0-0'}}</span>
       </section>
@@ -94,19 +95,6 @@
 </ng-container>
 
 
-
-<eco-fab-speed-dial class="fab" [(open)]="open" direction="up" animationMode="fling">
-
-  <eco-fab-speed-dial-trigger [spin]="spin">
-    <button mat-fab (click)="doAction('trigger')">
-      <mat-icon class="spin180">add</mat-icon>
-    </button>
-  </eco-fab-speed-dial-trigger>
-
-  <eco-fab-speed-dial-actions>
-    <button mat-mini-fab (click)="addMeal()">
-      <mat-icon>add</mat-icon>
-    </button>
-  </eco-fab-speed-dial-actions>
-
-</eco-fab-speed-dial>
+<button class="add-meal" mat-fab (click)="addMeal()">
+  <mat-icon>add</mat-icon>
+</button>

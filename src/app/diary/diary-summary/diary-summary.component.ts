@@ -15,9 +15,6 @@ import { FormControl } from '@angular/forms';
 })
 export class DiarySummaryComponent implements OnInit, OnDestroy {
 
-  public open = false;
-  public spin = false;
-
   public focus: string;
 
   public columns: ReadonlyArray<string> = ['Calories', 'Macronutrients'];
@@ -57,10 +54,6 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
 
   public get hasContents(): boolean {
     return this.meals !== undefined && this.meals.length > 0;
-  }
-
-  public doAction(event: any) {
-    console.log(event);
   }
 
   public addMeal() {

@@ -27,6 +27,8 @@ export class AddPortionComponent implements OnInit, OnDestroy {
   public portionForm: FormGroup = new FormGroup(
     { quantity: this.quantitiesControl });
 
+  public mealNumbers: number[] = [];
+
   constructor(private router: Router, private route: ActivatedRoute, private planner: PlannerService, private foodsService: FoodsService, private uiService: UiService) { }
 
   ngOnInit() {
@@ -38,6 +40,10 @@ export class AddPortionComponent implements OnInit, OnDestroy {
         this.previewedPortion = new Portion('', 100, food, 0);
         this.food = food;
       });
+
+    this.subscription.add(this.planner.getPortionsNumber().subscribe(mealNumbers => {
+      this.mealNumbers = mealNumbers;
+    }));
 
     this.mealSelector.setValue(this.planner.focusedMeal);
     this.quantitiesControl.setValue(100);
@@ -69,12 +75,12 @@ export class AddPortionComponent implements OnInit, OnDestroy {
     const portionData = { mealID: this.mealSelector.value, foodID: this.food.id, quantity: this.quantitiesControl.value };
     this.planner.addPortion(portionData).then((data) => {
       this.back();
-      this.uiService.notify(`Added ${this.food.name} portion`, 'Undo', () => {
+      this.uiService.notify(`Added ${this.food.name}`, 'Undo', () => {
         this.planner.removePortion(data);
       });
     }).catch(error => {
       console.log(error);
-      this.uiService.warn(`Couldn't record new portion`);
+      this.uiService.warn(`Couldn't record ${this.food.name}`);
     });
   }
 }

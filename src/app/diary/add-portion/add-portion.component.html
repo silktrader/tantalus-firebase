@@ -1,16 +1,33 @@
-<mat-toolbar class="toolbar" color="primary" class="mat-typography">
-  <a class="toolbar-item" mat-icon-button [routerLink]="[ '../']">
+<mat-toolbar class="toolbar" color="primary">
+  <button class="toolbar-item" mat-icon-button (click)="back()">
     <mat-icon>arrow_back</mat-icon>
-  </a>
+  </button>
   <span class="toolbar-item toolbar-title">
     <h3>Add Portion</h3>
   </span>
+  <button class="toolbar-item" mat-icon-button>
+    <mat-icon>file_copy</mat-icon>
+  </button>
 </mat-toolbar>
 
 <ng-container *ngIf="food !== undefined">
   <mat-card>
     <mat-card-header class="header">
-      <mat-card-title>{{food.name}}</mat-card-title>
+      <mat-card-title>
+        <section class="header">
+          <section class="header-left">
+            <button mat-icon-button>
+              <mat-icon>favorite</mat-icon>
+            </button>
+          </section>
+          <span class="header-title">{{food.name}}</span>
+          <section class="header-right">
+            <a mat-icon-button [routerLink]="[ '/food/', food.id]">
+              <mat-icon>edit</mat-icon>
+            </a>
+          </section>
+        </section>
+      </mat-card-title>
     </mat-card-header>
     <mat-card-content class="summary">
       <section class="macronutrients">
@@ -43,20 +60,18 @@
         </mat-form-field>
       </section>
 
-      <section class="buttons mat-typography">
+      <section class="buttons">
         <button type="submit" (click)="save()" color="primary" mat-raised-button [disabled]="saveDisabled">Save</button>
-        <mat-select [formControl]="mealSelector">
-          <mat-optgroup *ngIf="planner.recordedMeals?.length > 0" label="Recorded">
-            <mat-option *ngFor="let recordedMeal of planner.recordedMeals" [value]="recordedMeal">
-              {{planner.getMealName(recordedMeal)}}
+        <mat-form-field class="meal-selector">
+          <mat-select [formControl]="mealSelector" required>
+            <mat-select-trigger>
+              <span>{{planner.getMealName(mealSelector.value)}}</span>
+            </mat-select-trigger>
+            <mat-option *ngFor="let availableMeal of planner.availableMealsIDs" [value]="availableMeal">
+              <span [matBadge]="mealNumbers[availableMeal]" matBadgeOverlap="false" matBadgeSize="small">{{planner.getMealName(availableMeal)}}</span>
             </mat-option>
-          </mat-optgroup>
-          <mat-optgroup *ngIf="planner.availableMeals?.length > 0" label="New">
-            <mat-option *ngFor="let availableMeal of planner.availableMeals" [value]="availableMeal">
-              {{planner.getMealName(availableMeal)}}
-            </mat-option>
-          </mat-optgroup>
-        </mat-select>
+          </mat-select>
+        </mat-form-field>
       </section>
     </mat-card-content>
 

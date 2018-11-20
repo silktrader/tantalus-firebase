@@ -17,9 +17,6 @@ export class PlannerService {
 
   constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private readonly foodService: FoodsService) { }
 
-  // should this be configurable by users? tk
-  public static availableMealsIDS = [0, 1, 2, 3, 4, 5];
-
   private dateYMD: DateYMD;
   private _date: Date;
   private document: AngularFirestoreDocument<IDiaryEntry>;
@@ -33,6 +30,11 @@ export class PlannerService {
 
   public get meals(): Observable<ReadonlyArray<Meal>> {
     return this._meals;
+  }
+
+  // should this be configurable by users? tk
+  public get availableMealsIDs(): ReadonlyArray<number> {
+    return Meal.mealIDs;
   }
 
   public initialise(dateYMD: DateYMD) {
@@ -118,7 +120,7 @@ export class PlannerService {
     return this._meals.pipe(
       map(meals => {
         const mealNumbers: number[] = [];
-        for (let i = 0; i < PlannerService.availableMealsIDS.length; i++) {
+        for (let i = 0; i < Meal.mealNames.length; i++) {
           const number = meals[i] === undefined ? 0 : meals[i].portions.length;
           mealNumbers.push(number);
         }
@@ -157,6 +159,7 @@ export class PlannerService {
     ).then(() => portionDataID);
   }
 
+  // tk can it be shortened to one set operation?
   public changePortion(removedPortion: PortionData, newPortion: PortionData): Promise<[void, void]> {
     const document = <any>this.document;
     const removal: Promise<void> = document.set(

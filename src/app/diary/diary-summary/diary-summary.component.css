@@ -23,11 +23,11 @@ mat-expansion-panel {
     padding-left: 24px;
     margin: 3%;
     margin-top: 0%;
+    align-items: center;
 }
 
 .columns-selector {
     width: 16ch;
-    padding-left: 24px;
 }
 
 .header-notes {
@@ -154,8 +154,8 @@ mat-card.no-meals {
     font-weight: 500;
 }
 
-.fab {
-    position: absolute;
+.add-meal {
+    position: fixed;
     right: 20px;
     bottom: 20px;
 }

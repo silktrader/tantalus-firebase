@@ -6,6 +6,7 @@ import { Food } from 'src/app/foods/food';
 import { Observable, Subscription } from 'rxjs';
 import { PlannerService } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Meal } from 'src/app/models/meal';
 
 @Component({
   selector: 'app-select-portion',
@@ -48,7 +49,7 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   }
 
   public get availableMeals(): ReadonlyArray<number> {
-    return PlannerService.availableMealsIDS;
+    return Meal.mealIDs;
   }
 
   public back(): void {
