@@ -1,1 +1,4 @@
-<a *ngIf="this.authService.isLoggedIn" style="cursor: pointer" (click)="onLogout()">Logout</a>
+<a mat-list-item *ngIf="this.authService.isLoggedIn" style="cursor: pointer" (click)="onLogout()">
+    <mat-icon mat-list-icon>account_box</mat-icon>
+    <h4 mat-line>Logout</h4>
+</a>

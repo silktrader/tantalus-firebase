@@ -5,6 +5,7 @@ import { FoodsService } from '../foods.service';
 import { Observable, Subscription } from 'rxjs';
 import { distinct } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { UiService } from '../ui.service';
 
 @Component({
   selector: 'app-foods',
@@ -20,7 +21,7 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private readonly foodsService: FoodsService, private readonly router: Router) { }
+  constructor(private foodsService: FoodsService, public uiService: UiService, private router: Router) { }
 
   // might have to use AfterViewInit
   ngOnInit(): void {
