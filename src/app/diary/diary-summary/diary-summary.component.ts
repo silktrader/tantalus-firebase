@@ -20,8 +20,8 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   public columns: ReadonlyArray<string> = ['Calories', 'Macronutrients'];
   public columnSelector = new FormControl();
 
-  public meals: ReadonlyArray<Meal>;
-  public diaryEntry: DiaryEntry;
+  public meals: ReadonlyArray<Meal> = [];
+  public diaryEntry: DiaryEntry | undefined;
   private subscription: Subscription = new Subscription();
 
   constructor(private readonly router: Router, private readonly route: ActivatedRoute, readonly plannerService: PlannerService, public uiService: UiService) { }
@@ -33,14 +33,12 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
     this.columnSelector.setValue(this.columns[0]);
 
     this.subscription.add(this.plannerService.meals.subscribe(meals => {
-      if (meals === undefined)
-        return;
 
       this.meals = meals;
       this.diaryEntry = new DiaryEntry(meals);
 
       // meals are sorted in the observable, set the last meal as the default one to new additions - tk move this into planner?
-      this.plannerService.focusedMeal = this.meals[this.meals.length - 1].order;
+      this.plannerService.focusedMeal = this.meals.length > 0 ? this.meals[this.meals.length - 1].order : 0;
     }));
   }
 
@@ -53,7 +51,7 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   }
 
   public get hasContents(): boolean {
-    return this.meals !== undefined && this.meals.length > 0;
+    return this.meals.length > 0;
   }
 
   public addMeal() {

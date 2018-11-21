@@ -69,8 +69,11 @@ export class PlannerService {
       .valueChanges()
       .pipe(
         switchMap((data: IDiaryEntry) => {
-          if (data === undefined)
-            return of();
+
+          if (data === undefined) {
+            portions = [];    // tk tricky stuff here! must be set to empty else it will keep the old portions
+            return <Observable<Food[]>>of([]);
+          }
 
           portions = data.portions;
 
@@ -89,6 +92,9 @@ export class PlannerService {
 
   private createMeals(portions: PortionData[], foods: Food[]): Meal[] {
     const meals: Meal[] = [];
+
+    if (portions === undefined)
+      return meals;
 
     for (let i = 0; i < portions.length; i++) {
       const { id, quantity, mealID, foodID } = portions[i];
@@ -179,14 +185,21 @@ export class PlannerService {
     );
   }
 
-  public deleteDay(): Observable<IDiaryEntry | undefined> {
+  public deleteDay(): Observable<IDiaryEntry> {
+
+    // let docContents;
+
+    // this.document.valueChanges().subscribe(bla => { docContents = bla; });
+
+    // return this.document.delete().then(() => {
+    //   return docContents;
+    // });
 
     return this.document.valueChanges().pipe(
-      take(1),
       switchMap((contents) => {
-        if (contents === undefined) {
-          return of(undefined);
-        }
+        if (contents === undefined)
+          return of();
+
         return this.document.delete().then(() => {
           return contents;
         });
