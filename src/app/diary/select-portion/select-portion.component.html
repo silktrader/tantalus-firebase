@@ -1,45 +1,51 @@
-<mat-toolbar color="primary">
+<mat-toolbar class="toolbar" color="primary">
   <button class="toolbar-item" mat-icon-button (click)="back()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-
-  <mat-form-field>
-    <mat-select [formControl]="mealSelector">
-      <mat-select-trigger>
-        <span class="select-entry">
-          <span>{{planner.getMealName(mealSelector.value)}}</span><span class="meals-number">({{mealNumbers[mealSelector.value]}})</span>
-        </span>
-      </mat-select-trigger>
-      <mat-option *ngFor="let availableMeal of availableMeals" [value]="availableMeal">
-        <span class="select-entry">
-          <span>{{planner.getMealName(availableMeal)}}</span><span class="meals-number">({{mealNumbers[availableMeal]}})</span>
-        </span>
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <span class="toolbar-item toolbar-title">
+    <h3>Select Food & Meal</h3>
+  </span>
+  <button class="toolbar-item" mat-icon-button>
+    <mat-icon>file_copy</mat-icon>
+  </button>
 </mat-toolbar>
 
-<form class="search-container">
-  <mat-form-field class="search" appearance="outline">
+<form class="inputs">
+  <mat-form-field class="search">
     <mat-label>Search</mat-label>
     <input type="search" matInput [formControl]="searchBox" autocomplete="off" (keyup)="search($event)">
     <button matSuffix mat-icon-button (click)="resetSearch()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+
+  <mat-form-field class="meal-selector mat-body">
+    <mat-select [formControl]="mealSelector" required>
+      <mat-select-trigger>
+        <span>{{planner.getMealName(mealSelector.value)}}</span>
+      </mat-select-trigger>
+      <mat-option *ngFor="let availableMeal of planner.availableMealsIDs" [value]="availableMeal">
+        <span [matBadge]="mealNumbers[availableMeal]" matBadgeOverlap="false" matBadgeSize="small">{{planner.getMealName(availableMeal)}}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </form>
 
+<mat-divider></mat-divider>
+
 <ng-container *ngIf="filteredFoods$ | async as filteredFoods">
-  <section *ngIf="filteredFoods.length > 0">
-    <div class="search-item" *ngFor="let food of filteredFoods" (click)="proceedWithSelection(food)" matRipple>
-      <mat-icon class="search-item-icon" matListIcon>bookmark</mat-icon>
+  <mat-nav-list *ngIf="filteredFoods.length > 0">
+    <a mat-list-item routerLink class="search-item" *ngFor="let food of filteredFoods" (click)="proceedWithSelection(food)">
+      <mat-icon class="search-item-icon" matListIcon>label</mat-icon>
       <span class="search-item-name">{{food.name}}</span>
       <span class="search-item-calories">{{food.approximateCalories}}</span>
-    </div>
-  </section>
+    </a>
+  </mat-nav-list>
+
+  <mat-divider></mat-divider>
 
   <section class="no-results" *ngIf="filteredFoods.length === 0 && searchBox.value !== ''">
-    <span class="no-results-message">No matching food found</span>
-    <button mat-raised-button color="primary" (click)="startFoodCreation()">New Food</button>
+    <span class="no-results-message"><b>{{searchBox.value}}</b> not found</span>
+    <button mat-raised-button color="primary" (click)="startFoodCreation()">Create</button>
   </section>
 </ng-container>

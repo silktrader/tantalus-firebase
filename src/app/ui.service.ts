@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { MatSidenav, MatDrawerToggleResult, MatSnackBar } from '@angular/material';
+import { Location } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
 
   private sidenav: MatSidenav;
 
-  constructor(private snackBar: MatSnackBar) { }
+  constructor(private snackBar: MatSnackBar, private location: Location) { }
 
   public setSidenav(sidenav: MatSidenav) {
     this.sidenav = sidenav;
@@ -25,5 +26,9 @@ export class UiService {
 
   public warn(message: string) {
     this.snackBar.open(message, '', { duration: 3000 });
+  }
+
+  public goBack() {
+    this.location.back();
   }
 }

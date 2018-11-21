@@ -7,6 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import { PlannerService } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Meal } from 'src/app/models/meal';
+import { UiService } from 'src/app/ui.service';
 
 @Component({
   selector: 'app-select-portion',
@@ -25,7 +26,7 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
 
-  constructor(private readonly foodsService: FoodsService, public readonly planner: PlannerService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private foodsService: FoodsService, public planner: PlannerService, private ui: UiService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
 
@@ -53,7 +54,7 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   }
 
   public back(): void {
-    this.router.navigate(['..'], { relativeTo: this.route });
+    this.ui.goBack();
   }
 
   public search($event): void {

@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
 import { Food } from '../food';
 import { Observable, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { UiService } from 'src/app/ui.service';
 
 @Component({
   selector: 'app-edit-food',
@@ -26,7 +26,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   private food: Food;
   private subscription: Subscription;
 
-  constructor(private foodsService: FoodsService, private location: Location, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private foodsService: FoodsService, private ui: UiService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.food$ = this.activatedRoute.paramMap.pipe(
@@ -57,7 +57,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
 
     this.subscription.unsubscribe();
 
-    this.location.back();
+    this.ui.goBack();
   }
 
   onDelete() {
@@ -66,7 +66,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   }
 
   onDiscard() {
-    this.location.back();
+    this.ui.goBack();
   }
 
 }

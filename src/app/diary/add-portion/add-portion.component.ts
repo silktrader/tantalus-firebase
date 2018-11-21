@@ -29,7 +29,7 @@ export class AddPortionComponent implements OnInit, OnDestroy {
 
   public mealNumbers: number[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private planner: PlannerService, private foodsService: FoodsService, private uiService: UiService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private planner: PlannerService, private foodsService: FoodsService, private ui: UiService) { }
 
   ngOnInit() {
     this.subscription = this.route.params.pipe(
@@ -64,7 +64,7 @@ export class AddPortionComponent implements OnInit, OnDestroy {
   }
 
   public back(): void {
-    this.router.navigate(['../..'], { relativeTo: this.route });
+    this.ui.goBack();
   }
 
   public get saveDisabled(): boolean {
@@ -75,12 +75,12 @@ export class AddPortionComponent implements OnInit, OnDestroy {
     const portionData = { mealID: this.mealSelector.value, foodID: this.food.id, quantity: this.quantitiesControl.value };
     this.planner.addPortion(portionData).then((data) => {
       this.back();
-      this.uiService.notify(`Added ${this.food.name}`, 'Undo', () => {
+      this.ui.notify(`Added ${this.food.name}`, 'Undo', () => {
         this.planner.removePortion(data);
       });
     }).catch(error => {
       console.log(error);
-      this.uiService.warn(`Couldn't record ${this.food.name}`);
+      this.ui.warn(`Couldn't record ${this.food.name}`);
     });
   }
 }
