@@ -3,7 +3,7 @@ import { PlannerService, DateYMD } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Portion } from 'src/app/models/portion';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
 import { UiService } from 'src/app/ui.service';
@@ -22,12 +22,10 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   public originalPortion: Portion;
   public previewedPortion: Portion;
 
-  public mealNumbers: number[] = [];
-
   public quantitiesControl = new FormControl('', [Validators.required, PortionQuantityValidator]);
   public mealSelector = new FormControl();
 
-  constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, private uiService: UiService) { }
+  constructor(private readonly planner: PlannerService, private route: ActivatedRoute, private router: Router, private ui: UiService) { }
 
   ngOnInit() {
 
@@ -36,7 +34,7 @@ export class EditPortionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.subscription = this.route.params.pipe(switchMap(params => {
+    this.subscription = this.route.params.pipe(map(params => {
 
       this.id = params.portionID;
       return this.planner.getPortion(this.id);
@@ -58,10 +56,6 @@ export class EditPortionComponent implements OnInit, OnDestroy {
 
     this.subscription.add(this.mealSelector.valueChanges.subscribe((newMealID: number) => {
       this.previewedPortion = new Portion(this.originalPortion.id, this.previewedPortion.quantity, this.previewedPortion.food, newMealID);
-    }));
-
-    this.subscription.add(this.planner.getPortionsNumber().subscribe(mealNumbers => {
-      this.mealNumbers = mealNumbers;
     }));
   }
 
@@ -152,11 +146,11 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     else if (quantityDifference < 0)
       message += ` decreased by ${-quantityDifference}g.`;
 
-    this.uiService.notify(message, 'Undo', () => this.changePortion(final, initial));
+    this.ui.notify(message, 'Undo', () => this.changePortion(final, initial));
   }
 
   private notifyDeletedPortion(portion: Portion) {
-    this.uiService.notify(`Removed ${portion.food.name}`, 'Undo', () => {
+    this.ui.notify(`Removed ${portion.food.name}`, 'Undo', () => {
       // recreate old ID
       this.planner.addPortion({ id: portion.id, foodID: portion.food.id, quantity: portion.quantity, mealID: portion.mealID });
     });

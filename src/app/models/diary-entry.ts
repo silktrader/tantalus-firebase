@@ -2,10 +2,10 @@ import { Meal } from './meal';
 
 export class DiaryEntry {
 
-    public meals: ReadonlyArray<Meal>;
+    public readonly meals: ReadonlyArray<Meal>;
 
     constructor(meals: ReadonlyArray<Meal>) {
-        this.meals = meals;
+        this.meals = meals || [];
     }
 
     private getAggregate(propertyName: string): number {

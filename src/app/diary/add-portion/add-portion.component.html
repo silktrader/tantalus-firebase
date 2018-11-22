@@ -68,7 +68,7 @@
               <span>{{planner.getMealName(mealSelector.value)}}</span>
             </mat-select-trigger>
             <mat-option *ngFor="let availableMeal of planner.availableMealsIDs" [value]="availableMeal">
-              <span [matBadge]="mealNumbers[availableMeal]" matBadgeOverlap="false" matBadgeSize="small">{{planner.getMealName(availableMeal)}}</span>
+              <span [matBadge]="planner.mealNumbers[availableMeal]" matBadgeOverlap="false" matBadgeSize="small">{{planner.getMealName(availableMeal)}}</span>
             </mat-option>
           </mat-select>
         </mat-form-field>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest } from 'rxjs';
-import { map, switchMap, take, shareReplay } from 'rxjs/operators';
+import { Observable, of, combineLatest, Subject, forkJoin } from 'rxjs';
+import { map, switchMap, shareReplay, flatMap, mergeMap } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
@@ -11,25 +11,56 @@ import { Food } from '../foods/food';
 import { Portion } from '../models/portion';
 import { FoodsService } from '../foods.service';
 import * as shortid from 'shortid';
+import { DiaryEntry } from '../models/diary-entry';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
 
-  constructor(private readonly auth: AuthService, private readonly af: AngularFirestore, private readonly foodService: FoodsService) { }
-
-  private dateYMD: DateYMD;
   private _date: Date;
   private document: AngularFirestoreDocument<IDiaryEntry>;
-  private _meals: Observable<ReadonlyArray<Meal>>;
+
+  public diaryEntry: DiaryEntry = new DiaryEntry([]);
+  private d: Subject<DateYMD> = new Subject();
+
+  constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService) {
+
+    let document: AngularFirestoreDocument<IDiaryEntry>;
+    let portions: PortionData[];
+
+    this.d.pipe(
+      switchMap(dateYMD => {
+        // don't need to store document!! just store date tk!
+        document = this.getDocument(dateYMD);
+        return document.valueChanges();
+      }),
+      switchMap(diaryData => {
+
+        if (diaryData === undefined) {
+          portions = [];
+          return of([]);
+        }
+
+        portions = diaryData.portions;
+
+        // draft an array of food ids employed while removing duplicates
+        const foodIDs = Array.from(new Set<string>(portions.map(portion => portion.foodID)));
+
+        // fetch food observables and assing missing id property
+        const foods$ = foodIDs.map(id => this.foodService.getFood(id));
+
+        // for some reason combineLatest([]) doesn't emit values whereas of([]) does
+        return combineLatest(foods$);
+      })).subscribe(foods => {
+        this.document = document;
+        this.diaryEntry = new DiaryEntry(this.createMeals(portions, foods));
+        this.focusedMeal = this.getLatestMeal(this.diaryEntry.meals);
+      });
+  }
 
   public focusedMeal = 0;
 
   public get date(): Readonly<Date> {
     return this._date;
-  }
-
-  public get meals(): Observable<ReadonlyArray<Meal>> {
-    return this._meals;
   }
 
   // should this be configurable by users? tk
@@ -38,56 +69,14 @@ export class PlannerService {
   }
 
   public initialise(dateYMD: DateYMD) {
-    this.dateYMD = dateYMD;
-    this._date = new Date(dateYMD.year, dateYMD.month - 1, dateYMD.day);
-    this.document = this.getDocument(this.dateYMD);
 
-    this._meals = this.getMeals();     // tk change to subject?
+    this.d.next(dateYMD);
+    this._date = new Date(dateYMD.year, dateYMD.month - 1, dateYMD.day); // tk change and verify URL!
   }
 
   private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
     return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`
     );
-  }
-
-  public getRecordedMeals(): Observable<ReadonlyArray<number>> {
-    return this._meals.pipe(map(meals => {
-      if (meals === undefined)
-        return [];
-      return meals.map(meal => meal.order);
-    }));
-  }
-
-  public getLastMeal(): Observable<number> {
-    return this._meals.pipe(map(meals => meals.length));
-  }
-
-  private getMeals(): Observable<Meal[]> {
-    let portions: PortionData[];
-
-    return this.document
-      .valueChanges()
-      .pipe(
-        switchMap((data: IDiaryEntry) => {
-
-          if (data === undefined) {
-            portions = [];    // tk tricky stuff here! must be set to empty else it will keep the old portions
-            return <Observable<Food[]>>of([]);
-          }
-
-          portions = data.portions;
-
-          // draft an array of food ids employed while removing duplicates
-          const foodIDs = Array.from(new Set<string>(portions.map(portion => portion.foodID)));
-
-          // fetch food observables and assing missing id property
-          const foods$: Observable<Food>[] = foodIDs.map(id => this.foodService.getFood(id));
-
-          return combineLatest(foods$);
-        }),
-        map(foods => this.createMeals(portions, foods)),
-        shareReplay(),
-      );
   }
 
   private createMeals(portions: PortionData[], foods: Food[]): Meal[] {
@@ -122,35 +111,31 @@ export class PlannerService {
     return Meal.getName(index);
   }
 
-  public getPortionsNumber(): Observable<number[]> {
-    return this._meals.pipe(
-      map(meals => {
-        const mealNumbers: number[] = [];
-        for (let i = 0; i < Meal.mealNames.length; i++) {
-          const number = meals[i] === undefined ? 0 : meals[i].portions.length;
-          mealNumbers.push(number);
-        }
-        return mealNumbers;
-      }));
+  public get mealNumbers(): ReadonlyArray<Number> {
+    return this.diaryEntry.meals.map(meal => meal.order);
   }
 
-  public getPortion(portionID: string): Observable<Portion | undefined> {
+  private getLatestMeal(meals: ReadonlyArray<Meal>): number {
+    let latestMealID = 0;
+    for (let i = 0; i < meals.length; i++) {
+      if (meals[i].order > latestMealID)
+        latestMealID = meals[i].order;
+    }
+    return latestMealID;
+  }
 
-    return this._meals.pipe(
-      switchMap((meals: ReadonlyArray<Meal>) => {
+  public get meals(): ReadonlyArray<Meal> {
+    return this.diaryEntry.meals;
+  }
 
-        for (let i = 0; i < meals.length; i++) {
-          for (let x = 0; x < meals[i].portions.length; x++) {
-            if (meals[i].portions[x].id === portionID) {
-              return of(meals[i].portions[x]);
-            }
-          }
+  public getPortion(portionID: string): Portion | undefined {
+    for (let i = 0; i < this.meals.length; i++) {
+      for (let x = 0; x < this.meals[i].portions.length; x++) {
+        if (this.meals[i].portions[x].id === portionID) {
+          return this.meals[i].portions[x];
         }
-
-        // in case nothing was found return an empty observable
-        return of();
       }
-      ));
+    }
   }
 
   public addPortion(portionData: PortionData): Promise<PortionData> {
@@ -186,14 +171,6 @@ export class PlannerService {
   }
 
   public deleteDay(): Observable<IDiaryEntry> {
-
-    // let docContents;
-
-    // this.document.valueChanges().subscribe(bla => { docContents = bla; });
-
-    // return this.document.delete().then(() => {
-    //   return docContents;
-    // });
 
     return this.document.valueChanges().pipe(
       switchMap((contents) => {

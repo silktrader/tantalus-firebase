@@ -22,8 +22,6 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   public mealSelector: FormControl = new FormControl();
   public searchBox: FormControl = new FormControl();
 
-  public mealNumbers: number[] = [];
-
   private subscription = new Subscription();
 
   constructor(private foodsService: FoodsService, public planner: PlannerService, private ui: UiService, private route: ActivatedRoute, private router: Router) { }
@@ -40,9 +38,6 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
     this.mealSelector.setValue(this.planner.focusedMeal);
 
     this.subscription.add(this.mealSelector.valueChanges.subscribe(value => this.planner.focusedMeal = value));
-    this.subscription.add(this.planner.getPortionsNumber().subscribe(mealNumbers => {
-      this.mealNumbers = mealNumbers;
-    }));
   }
 
   ngOnDestroy() {

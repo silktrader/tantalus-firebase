@@ -17,6 +17,7 @@ export class DiaryOutletComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.route.params.subscribe((params: Params) => {
       const { year, month, day } = params;
+      // tk don't run initialise if the YMD IS THE SAME !!!!!!!!!!!!!
       this.plannerService.initialise({ year, month, day });
     });
   }
