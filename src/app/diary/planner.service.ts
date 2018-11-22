@@ -12,6 +12,7 @@ import { Portion } from '../models/portion';
 import { FoodsService } from '../foods.service';
 import * as shortid from 'shortid';
 import { DiaryEntry } from '../models/diary-entry';
+import { UiService } from '../ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
@@ -22,7 +23,7 @@ export class PlannerService {
   public diaryEntry: DiaryEntry = new DiaryEntry([]);
   private d: Subject<DateYMD> = new Subject();
 
-  constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService) {
+  constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService, private ui: UiService) {
 
     let document: AngularFirestoreDocument<IDiaryEntry>;
     let portions: PortionData[];
@@ -75,36 +76,30 @@ export class PlannerService {
   }
 
   private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
-    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`
-    );
+    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`);
   }
 
   private createMeals(portions: PortionData[], foods: Food[]): Meal[] {
-    const meals: Meal[] = [];
-
-    if (portions === undefined)
-      return meals;
+    const meals: Array<Meal> = [];
 
     for (let i = 0; i < portions.length; i++) {
       const { id, quantity, mealID, foodID } = portions[i];
+      const selectedFood: Food | undefined = foods.find(food => food.id === foodID);
 
-      if (id === undefined)
-        continue; // tk
+      if (id === undefined || selectedFood === undefined) {
+        this.ui.warn(`Unable to read portion ${id || 'missing ID'} of ${selectedFood || 'missing food'}`);
+        continue;
+      }
 
+      // create the meal whether necessary
       if (meals[mealID] === undefined)
         meals[mealID] = new Meal(mealID);
 
-      const portionFood: Food | undefined = foods.find(food => food.id === foodID);
-      if (portionFood === undefined)
-        continue; // tk warn user?
-
-      meals[mealID].addPortion(new Portion(id, quantity, portionFood, mealID));
+      meals[mealID].addPortion(new Portion(id, quantity, selectedFood, mealID));
     }
 
     // filter out undefined meals when gaps are present, tk sort them later
-    return meals
-      .filter(meal => meal !== undefined)
-      .sort((a: Meal, b: Meal) => a.order - b.order);
+    return meals.filter(meal => meal !== undefined).sort((a: Meal, b: Meal) => a.order - b.order);
   }
 
   public getMealName(index: number) {
