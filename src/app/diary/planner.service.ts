@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest, Subject, forkJoin } from 'rxjs';
-import { map, switchMap, shareReplay, flatMap, mergeMap } from 'rxjs/operators';
+import { Observable, of, combineLatest, BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
@@ -13,27 +13,22 @@ import { FoodsService } from '../foods.service';
 import * as shortid from 'shortid';
 import { DiaryEntry } from '../models/diary-entry';
 import { UiService } from '../ui.service';
+import { CalendarService } from '../calendar/calendar.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlannerService {
 
   private _date: Date;
-  private document: AngularFirestoreDocument<IDiaryEntry>;
 
   public diaryEntry: DiaryEntry = new DiaryEntry([]);
-  private d: Subject<DateYMD> = new Subject();
+  private dateYMD = new BehaviorSubject<DateYMD>(CalendarService.getYMD(new Date()));
 
   constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService, private ui: UiService) {
 
-    let document: AngularFirestoreDocument<IDiaryEntry>;
     let portions: PortionData[];
 
-    this.d.pipe(
-      switchMap(dateYMD => {
-        // don't need to store document!! just store date tk!
-        document = this.getDocument(dateYMD);
-        return document.valueChanges();
-      }),
+    this.dateYMD.pipe(
+      switchMap(() => this.document.valueChanges()),
       switchMap(diaryData => {
 
         if (diaryData === undefined) {
@@ -52,7 +47,6 @@ export class PlannerService {
         // for some reason combineLatest([]) doesn't emit values whereas of([]) does
         return combineLatest(foods$);
       })).subscribe(foods => {
-        this.document = document;
         this.diaryEntry = new DiaryEntry(this.createMeals(portions, foods));
         this.focusedMeal = this.getLatestMeal(this.diaryEntry.meals);
       });
@@ -71,12 +65,13 @@ export class PlannerService {
 
   public initialise(dateYMD: DateYMD) {
 
-    this.d.next(dateYMD);
-    this._date = new Date(dateYMD.year, dateYMD.month - 1, dateYMD.day); // tk change and verify URL!
+    this.dateYMD.next(dateYMD);
+    this._date = CalendarService.getDate(dateYMD); // tk change and verify URL!
   }
 
-  private getDocument(dateURL: DateYMD): AngularFirestoreDocument<IDiaryEntry> {
-    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${+dateURL.year}-${+dateURL.month}-${+dateURL.day}`);
+  private get document(): AngularFirestoreDocument<IDiaryEntry> {
+    const { year, month, day } = this.dateYMD.getValue();
+    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${year}-${month}-${day}`);
   }
 
   private createMeals(portions: PortionData[], foods: Food[]): Meal[] {

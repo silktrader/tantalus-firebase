@@ -62,7 +62,7 @@ export class SelectPortionComponent implements OnInit, OnDestroy {
   }
 
   public startFoodCreation(): void {
-    this.router.navigate(['/addfood']);
+    this.router.navigate(['/add-food'], { queryParams: { name: this.searchBox.value } });
   }
 
   public proceedWithSelection(food: Food): void {
