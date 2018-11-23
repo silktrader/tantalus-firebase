@@ -7,12 +7,13 @@ exports.searchFields = functions.firestore.document('foods/{foodID}').onWrite((c
     if (!food)
         return null;
     const oldName = food.get('name');
+    const searchableName = food.get('searchableName');
     // update and name was unchanged
-    if (food.get('searchableName') === oldName)
+    if (searchableName === oldName)
         return null;
     // update name when it differs to avoid infinite onWrite triggers
     const newName = getNormalisedName(oldName);
-    if (oldName !== newName) {
+    if (searchableName !== newName) {
         return change.after.ref.update({
             searchableName: newName,
         });

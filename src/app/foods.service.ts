@@ -7,9 +7,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
 import { FoodData } from './FoodData';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class FoodsService {
 
   public readonly foods$: Observable<Food[]>;
@@ -25,17 +23,34 @@ export class FoodsService {
     return new Food(data, id);
   }
 
+  /**
+   * Normalise names to facilitate case insensitive search, client side, to:
+   * - avoid redundant database writes
+   * - speed up updates without waiting for cloud functions completion
+   * @param name Mixed case name to normalise
+   */
+  private getSearchableName(name: string): string {
+    return name.toLowerCase();
+  }
+
   // tk handle missing food gracefully
   public getFood(id: string): Observable<Food> {
     return (this.af.doc<FoodData>(`foods/${id}`).valueChanges() as Observable<FoodData>).pipe(map(data => this.createFood(data, id)));
   }
 
   public addFood(food: FoodData): Promise<void> {
-    return this.af.doc(`foods/${shortid.generate()}`).set(food);
+    return this.af.doc(`foods/${shortid.generate()}`).set({ ...food, searchableName: this.getSearchableName(food.name) });
   }
 
   public editFood(food: FoodData) {
-    const trimmedFood = { name: food.name, brand: food.brand, proteins: food.proteins, carbs: food.carbs, fats: food.fats };
+    const trimmedFood = {
+      name: food.name,
+      searchableName: this.getSearchableName(food.name),
+      brand: food.brand,
+      proteins: food.proteins,
+      carbs: food.carbs,
+      fats: food.fats
+    };
     this.af.doc(`foods/${food.id}`).set(trimmedFood, { merge: true });
   }
 
