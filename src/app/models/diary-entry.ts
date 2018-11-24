@@ -4,7 +4,7 @@ export class DiaryEntry {
 
     public readonly meals: ReadonlyArray<Meal>;
 
-    constructor(meals: ReadonlyArray<Meal>) {
+    constructor(meals: Meal[]) {
         this.meals = meals || [];
     }
 

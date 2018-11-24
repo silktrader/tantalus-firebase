@@ -34,8 +34,8 @@ export class FoodsService {
   }
 
   // tk handle missing food gracefully
-  public getFood(id: string): Observable<Food> {
-    return (this.af.doc<FoodData>(`foods/${id}`).valueChanges() as Observable<FoodData>).pipe(map(data => this.createFood(data, id)));
+  public getFood(id: string): Observable<Food | undefined> {
+    return this.af.doc<FoodData>(`foods/${id}`).valueChanges().pipe(map(data => data ? this.createFood(data, id) : undefined));
   }
 
   public addFood(food: FoodData): Promise<void> {

@@ -35,6 +35,11 @@ export class AddPortionComponent implements OnInit, OnDestroy {
         const foodID = params.foodID;
         return this.foodsService.getFood(foodID);
       })).subscribe(food => {
+        if (food === undefined) {
+          this.back();
+          return;
+        }
+
         this.previewedPortion = new Portion('', 100, food, 0);
         this.food = food;
       });

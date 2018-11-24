@@ -42,12 +42,13 @@ export class PlannerService {
         const foodIDs = Array.from(new Set<string>(portions.map(portion => portion.foodID)));
 
         // fetch food observables and assing missing id property
-        const foods$ = foodIDs.map(id => this.foodService.getFood(id));
+        const foods$: Observable<Food | undefined>[] = foodIDs.map(id => this.foodService.getFood(id));
 
         // for some reason combineLatest([]) doesn't emit values whereas of([]) does
         return combineLatest(foods$);
-      })).subscribe(foods => {
-        this.diaryEntry = new DiaryEntry(this.createMeals(portions, foods));
+      })).subscribe((foods: (Food | undefined)[]) => {
+
+        this.diaryEntry = new DiaryEntry(this.createMeals(portions, foods.filter((food: Food | undefined) => food !== undefined) as Food[]));
         this.focusedMeal = this.getLatestMeal(this.diaryEntry.meals);
       });
   }

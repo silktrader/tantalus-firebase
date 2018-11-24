@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
 import { Food } from '../food';
-import { Observable, Subscription, of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { UiService } from 'src/app/ui.service';
 
 @Component({
@@ -15,29 +15,32 @@ import { UiService } from 'src/app/ui.service';
 export class EditFoodComponent implements OnInit, OnDestroy {
 
   addFoodForm = new FormGroup({
-    name: new FormControl(''),
-    brand: new FormControl(''),
-    proteins: new FormControl(''),
-    carbs: new FormControl(''),
-    fats: new FormControl('')
+    name: new FormControl(),
+    brand: new FormControl(),
+    proteins: new FormControl(),
+    carbs: new FormControl(),
+    fats: new FormControl()
   });
 
-  food$: Observable<Food>;
-  private food: Food;
+  public food: Food | undefined;
   private subscription: Subscription;
 
-  constructor(private foodsService: FoodsService, private ui: UiService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private foodsService: FoodsService, private ui: UiService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.food$ = this.activatedRoute.paramMap.pipe(
-      switchMap((params: ParamMap) =>
-        this.foodsService.getFood(params.get('id') || ''))
-    );
+    this.subscription = this.activatedRoute.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        const id = params.get('id');
+        if (id === null)
+          return of(undefined);
+        return this.foodsService.getFood(id);
+      })).subscribe(food => {
+        this.food = food;
+        if (food === undefined)
+          return;
 
-    this.subscription = this.food$.subscribe(food => {
-      this.addFoodForm.patchValue(food);
-      this.food = food;
-    });
+        this.addFoodForm.patchValue(food);
+      });
   }
 
   ngOnDestroy(): void {
@@ -45,6 +48,10 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+
+    if (this.food === undefined)
+      return;
+
     const form = this.addFoodForm.value;
     this.foodsService.editFood({
       id: this.food.id,
@@ -55,18 +62,22 @@ export class EditFoodComponent implements OnInit, OnDestroy {
       fats: +form.fats || 0,
     });
 
-    this.subscription.unsubscribe();
-
     this.ui.goBack();
   }
 
   onDelete() {
 
-    this.foodsService.deleteFood(this.food).then(() => this.router.navigate(['foods']));
+    if (this.food === undefined)
+      return; // tk?
+    this.foodsService.deleteFood(this.food).then(() => this.ui.goBack());
   }
 
   onDiscard() {
     this.ui.goBack();
+  }
+
+  public get editable() {
+    return this.food !== undefined;
   }
 
 }
