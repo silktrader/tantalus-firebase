@@ -126,10 +126,8 @@ export class EditPortionComponent implements OnInit, OnDestroy {
   }
 
   private changePortion(initial: Portion, final: Portion): void {
-    const { id, foodID, mealID } = initial;
     this.planner.changePortion(
-      { id, foodID, mealID, quantity: initial.quantity },
-      { id, foodID, mealID: final.mealID, quantity: final.quantity })
+      { id: final.id, foodID: final.foodID, mealID: final.mealID, quantity: final.quantity })
       .then(() => this.notifyChangePortion(initial, final));
   }
 

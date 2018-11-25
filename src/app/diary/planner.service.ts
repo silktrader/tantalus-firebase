@@ -19,6 +19,7 @@ import { CalendarService } from '../calendar/calendar.service';
 export class PlannerService {
 
   private _date: Date;
+  private serialisedData: IDiaryEntry;
 
   public diaryEntry = new BehaviorSubject<DiaryEntry>(new DiaryEntry([]));
   private dateYMD = new BehaviorSubject<DateYMD>(CalendarService.getYMD(new Date()));
@@ -26,6 +27,7 @@ export class PlannerService {
   constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService, private ui: UiService) {
 
     let portions: PortionData[];
+    let data: IDiaryEntry;
 
     this.dateYMD.pipe(
       switchMap(() => this.document.valueChanges()),
@@ -36,6 +38,7 @@ export class PlannerService {
           return of([]);
         }
 
+        data = diaryData;
         portions = diaryData.portions;
 
         // draft an array of food ids employed while removing duplicates
@@ -47,6 +50,7 @@ export class PlannerService {
         // for some reason combineLatest([]) doesn't emit values whereas of([]) does
         return combineLatest(foods$);
       })).subscribe((foods: (Food | undefined)[]) => {
+        this.serialisedData = data;
         this.diaryEntry.next(new DiaryEntry(this.createMeals(portions, foods.filter((food: Food | undefined) => food !== undefined) as Food[])));
         this.focusedMeal = this.getLatestMeal(this.diaryEntry.getValue().meals);
       });
@@ -133,18 +137,24 @@ export class PlannerService {
     ).then(() => portionDataID);
   }
 
-  // tk can it be shortened to one set operation?
-  public changePortion(removedPortion: PortionData, newPortion: PortionData): Promise<[void, void]> {
-    const document = <any>this.document;
-    const removal: Promise<void> = document.set(
-      { portions: firestore.FieldValue.arrayRemove(removedPortion) },
+  /**
+   * Matches the new portion ID to an exiting portions and overwrites data
+   * @param newPortionData Data to be overwritten
+   */
+  public changePortion(newPortionData: PortionData): Promise<void> {
+
+    // substitute the old portion data with new one
+    const newPortions: Array<PortionData> = [];
+    for (const portion of this.serialisedData.portions) {
+      if (portion.id === newPortionData.id)
+        newPortions.push(newPortionData);
+      else newPortions.push(portion);
+    }
+
+    return <any>this.document.set(
+      { portions: newPortions },
       { merge: true }
     );
-    const addition: Promise<void> = document.set(
-      { portions: firestore.FieldValue.arrayUnion(newPortion) },
-      { merge: true }
-    );
-    return Promise.all([removal, addition]);
   }
 
   public removePortion(removedPortion: PortionData): Promise<void> {
@@ -153,32 +163,34 @@ export class PlannerService {
     );
   }
 
-  public deleteDay(): Promise<DiaryEntry | null> {
+  public deleteDay(): Promise<IDiaryEntry | null> {
 
     // cache old value
-    const deletedEntry = this.diaryEntry.getValue();
+    const deletedData = this.serialisedData;
 
     return this.document.delete().then(
-      () => deletedEntry,
+      () => deletedData,
       () => null);
   }
 
-  public restoreDay(entry: DiaryEntry): Promise<void> {
+  public restoreDay(data: IDiaryEntry): Promise<void> {
 
-    const foods = new Set<string>();
-    const portions = new Array<PortionData>();
+    // const foods = new Set<string>();
+    // const portions = new Array<PortionData>();
 
-    for (const meal of entry.meals) {
-      for (const portion of meal.portions) {
-        foods.add(portion.foodID);
-        portions.push(portion.serialised);
-      }
-    }
+    // for (const meal of entry.meals) {
+    //   for (const portion of meal.portions) {
+    //     foods.add(portion.foodID);
+    //     portions.push(portion.serialised);
+    //   }
+    // }
 
-    return (<any>this.document).set({
-      portions: portions,
-      foods: Array.from(foods)      // spread operator would be faster but not allowed here
-    });
+    // return (<any>this.document).set({
+    //   portions: portions,
+    //   foods: Array.from(foods)      // spread operator would be faster but not allowed here
+    // });
+
+    return (<any>this.document).set(data);
   }
 }
 
