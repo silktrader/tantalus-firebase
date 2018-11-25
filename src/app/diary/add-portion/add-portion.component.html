@@ -58,10 +58,7 @@
           </section>
 
         </mat-form-field>
-      </section>
 
-      <section class="buttons">
-        <button type="submit" (click)="save()" color="primary" mat-raised-button [disabled]="saveDisabled">Save</button>
         <mat-form-field class="meal-selector">
           <mat-select [formControl]="mealSelector" required>
             <mat-select-trigger>
@@ -72,6 +69,10 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+      </section>
+
+      <section class="buttons">
+        <button type="submit" (click)="save()" color="primary" mat-raised-button [disabled]="saveDisabled">Save</button>
       </section>
     </mat-card-content>
 

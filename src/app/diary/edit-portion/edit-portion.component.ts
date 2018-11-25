@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlannerService, DateYMD } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Portion } from 'src/app/models/portion';
-import { Subscription } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Subscription, combineLatest, of } from 'rxjs';
+import { switchMap, map, take, shareReplay } from 'rxjs/operators';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PortionQuantityValidator } from '../../validators/portion-quantity.validator';
 import { UiService } from 'src/app/ui.service';
+import { DiaryEntry } from 'src/app/models/diary-entry';
 
 
 @Component({
@@ -34,12 +35,12 @@ export class EditPortionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.subscription = this.route.params.pipe(map(params => {
-
+    this.subscription = this.route.params.pipe(take(1), switchMap(params => {
       this.id = params.portionID;
-      return this.planner.getPortion(this.id);
-    }
-    )).subscribe(portion => {
+      // the switch to this observable is needed to avoid accessing getPortion before the diary is populated
+      return this.planner.diaryEntry;
+    })).subscribe(diaryEntry => {
+      const portion = diaryEntry.getPortion(this.id);
       if (portion === undefined)
         return;
 
@@ -47,7 +48,6 @@ export class EditPortionComponent implements OnInit, OnDestroy {
       this.previewedPortion = new Portion(portion.id, portion.quantity, portion.food, portion.mealID);
       this.quantitiesControl.setValue(this.originalPortion.quantity);
       this.mealSelector.setValue(this.originalPortion.mealID);
-
     });
 
     this.subscription.add(this.quantitiesControl.valueChanges.subscribe((newQuantity: number) => {

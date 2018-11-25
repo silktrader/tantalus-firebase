@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, of, combineLatest, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
@@ -20,7 +20,7 @@ export class PlannerService {
 
   private _date: Date;
 
-  public diaryEntry: DiaryEntry = new DiaryEntry([]);
+  public diaryEntry = new BehaviorSubject<DiaryEntry>(new DiaryEntry([]));
   private dateYMD = new BehaviorSubject<DateYMD>(CalendarService.getYMD(new Date()));
 
   constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService, private ui: UiService) {
@@ -47,9 +47,8 @@ export class PlannerService {
         // for some reason combineLatest([]) doesn't emit values whereas of([]) does
         return combineLatest(foods$);
       })).subscribe((foods: (Food | undefined)[]) => {
-
-        this.diaryEntry = new DiaryEntry(this.createMeals(portions, foods.filter((food: Food | undefined) => food !== undefined) as Food[]));
-        this.focusedMeal = this.getLatestMeal(this.diaryEntry.meals);
+        this.diaryEntry.next(new DiaryEntry(this.createMeals(portions, foods.filter((food: Food | undefined) => food !== undefined) as Food[])));
+        this.focusedMeal = this.getLatestMeal(this.diaryEntry.getValue().meals);
       });
   }
 
@@ -103,7 +102,7 @@ export class PlannerService {
   }
 
   public get mealNumbers(): ReadonlyArray<Number> {
-    return this.diaryEntry.meals.map(meal => meal.order);
+    return this.diaryEntry.getValue().meals.map(meal => meal.order);
   }
 
   private getLatestMeal(meals: ReadonlyArray<Meal>): number {
@@ -116,17 +115,7 @@ export class PlannerService {
   }
 
   public get meals(): ReadonlyArray<Meal> {
-    return this.diaryEntry.meals;
-  }
-
-  public getPortion(portionID: string): Portion | undefined {
-    for (let i = 0; i < this.meals.length; i++) {
-      for (let x = 0; x < this.meals[i].portions.length; x++) {
-        if (this.meals[i].portions[x].id === portionID) {
-          return this.meals[i].portions[x];
-        }
-      }
-    }
+    return this.diaryEntry.getValue().meals;
   }
 
   public addPortion(portionData: PortionData): Promise<PortionData> {

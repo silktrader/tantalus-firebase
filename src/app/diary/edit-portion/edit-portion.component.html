@@ -50,14 +50,14 @@
       </section>
 
       <section class="inputs">
-        <mat-form-field class="quantity mat-body-strong">
+        <mat-form-field class="quantity">
           <input class="quantity-editor" matInput type="number" autocomplete="off" [formControl]="quantitiesControl"
             required floatLabel="in grams" />
           <span matSuffix class="quantity-unit">grams</span>
           <mat-error *ngIf="quantitiesControl.invalid">{{getQuantitiesControlError()}}</mat-error>
         </mat-form-field>
 
-        <mat-form-field class="meal-selector mat-body">
+        <mat-form-field class="meal-selector">
           <mat-select [formControl]="mealSelector" required>
             <mat-select-trigger>
               <span>{{planner.getMealName(mealSelector.value)}}</span>

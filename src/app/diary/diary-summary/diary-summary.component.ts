@@ -20,8 +20,6 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   public columns: ReadonlyArray<string> = ['Calories', 'Macronutrients'];
   public columnSelector = new FormControl();
 
-  public meals: ReadonlyArray<Meal> = [];
-  public diaryEntry: DiaryEntry | undefined;
   private subscription: Subscription = new Subscription();
 
   constructor(private router: Router, private route: ActivatedRoute, readonly planner: PlannerService, public ui: UiService) { }
@@ -31,19 +29,14 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
     // sets up the colums selector and specify a default value
     this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.focus = value));
     this.columnSelector.setValue(this.columns[0]);
-
-    // this.subscription.add(this.plannerService.meals.subscribe(meals => {
-
-    //   this.meals = meals;
-    //   this.diaryEntry = new DiaryEntry(meals);
-
-    //   // meals are sorted in the observable, set the last meal as the default one to new additions - tk move this into planner?
-    //   this.plannerService.focusedMeal = this.meals.length > 0 ? this.meals[this.meals.length - 1].order : 0;
-    // }));
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  public get entry(): DiaryEntry {
+    return this.planner.diaryEntry.getValue();
   }
 
   public get date(): Readonly<Date> {
@@ -51,7 +44,7 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
   }
 
   public get hasContents(): boolean {
-    return this.planner.diaryEntry.meals.length > 0;
+    return this.planner.meals.length > 0;
   }
 
   public addMeal() {
