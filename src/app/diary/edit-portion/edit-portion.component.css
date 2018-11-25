@@ -114,3 +114,13 @@ mat-card {
     justify-content: space-evenly;
     margin-top: 10%;
 }
+
+mat-card.no-meals {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 25%;
+    margin: 3%;
+    font-style: italic;
+    font-weight: 500;
+}

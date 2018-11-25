@@ -26,4 +26,8 @@ export class Portion implements PortionData {
     get calories(): number {
         return this.food.calories * this.quantity / 100;
     }
+
+    get serialised(): PortionData {
+        return { id: this.id, quantity: this.quantity, foodID: this.foodID, mealID: this.mealID };
+    }
 }

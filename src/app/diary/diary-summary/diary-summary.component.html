@@ -72,7 +72,7 @@
         <mat-list-item class="portion" *ngFor="let portion of meal.portions">
           <a [routerLink]="['edit-portion', portion.id]" routerLinkActive="active">
             <span class="portion-header">
-              <span class="portion-header-name mat-body-2">{{portion.food.name}}</span>
+              <span class="mat-body-2">{{portion.food.name}}</span>
               <span class="portion-header-quantity mat-caption">{{portion.quantity | number:'1.0-0'}} g.</span>
             </span>
             <span *ngIf="focus == 'Macronutrients'" class="portion-column mat-body-1">

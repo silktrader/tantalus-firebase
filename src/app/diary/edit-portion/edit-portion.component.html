@@ -10,7 +10,11 @@
   </button>
 </mat-toolbar>
 
-<ng-container *ngIf="originalPortion !== undefined">
+<ng-container *ngIf="!hasPortion">
+  <mat-card class="no-meals"><span>Missing portion</span></mat-card>
+</ng-container>
+
+<ng-container *ngIf="hasPortion">
   <mat-card>
     <mat-card-header class="header">
       <mat-card-title>

@@ -72,6 +72,10 @@ export class EditPortionComponent implements OnInit, OnDestroy {
     return !this.quantitiesControl.dirty && this.mealSelector.value === this.originalPortion.mealID;
   }
 
+  get hasPortion(): boolean {
+    return this.originalPortion !== undefined;
+  }
+
   get title(): string {
     return 'Edit Portion';
   }

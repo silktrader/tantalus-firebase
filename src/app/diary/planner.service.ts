@@ -124,8 +124,11 @@ export class PlannerService {
     const portionDataID = { id: shortid.generate(), ...portionData };
 
     // do not rewrite the entire document but add to its portions array
-    return (<any>this.document).set(
-      { portions: firestore.FieldValue.arrayUnion(portionDataID) },
+    return (<any>this.document).set({
+      portions: firestore.FieldValue.arrayUnion(portionDataID),
+      // register the food ID for queries
+      foods: firestore.FieldValue.arrayUnion(portionData.foodID)
+    },
       { merge: true }
     ).then(() => portionDataID);
   }
@@ -150,22 +153,32 @@ export class PlannerService {
     );
   }
 
-  public deleteDay(): Observable<IDiaryEntry> {
+  public deleteDay(): Promise<DiaryEntry | null> {
 
-    return this.document.valueChanges().pipe(
-      switchMap((contents) => {
-        if (contents === undefined)
-          return of();
+    // cache old value
+    const deletedEntry = this.diaryEntry.getValue();
 
-        return this.document.delete().then(() => {
-          return contents;
-        });
-      })
-    );
+    return this.document.delete().then(
+      () => deletedEntry,
+      () => null);
   }
 
-  public writeDay(entry: IDiaryEntry): Promise<void> {
-    return this.document.set(entry);
+  public restoreDay(entry: DiaryEntry): Promise<void> {
+
+    const foods = new Set<string>();
+    const portions = new Array<PortionData>();
+
+    for (const meal of entry.meals) {
+      for (const portion of meal.portions) {
+        foods.add(portion.foodID);
+        portions.push(portion.serialised);
+      }
+    }
+
+    return (<any>this.document).set({
+      portions: portions,
+      foods: Array.from(foods)      // spread operator would be faster but not allowed here
+    });
   }
 }
 

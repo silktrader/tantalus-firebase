@@ -53,11 +53,11 @@ export class DiarySummaryComponent implements OnInit, OnDestroy {
 
   public deleteAll(): void {
 
-    this.planner.deleteDay().subscribe(result => {
-      if (result === undefined)
+    this.planner.deleteDay().then(result => {
+      if (result === null)
         this.ui.warn(`Couldn't delete ${this.date.toLocaleDateString()}'s entries`);
       else this.ui.notify(`Deleted ${this.date.toLocaleDateString()}'s entries`, 'Undo', () => {
-        this.planner.writeDay(result);
+        this.planner.restoreDay(result);
         this.ui.warn(`Restored ${this.date.toLocaleDateString()}'s entries`);
       });
     });
