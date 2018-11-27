@@ -24,6 +24,7 @@ export class DiaryOutletComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.plannerService.reset();
   }
 
 }

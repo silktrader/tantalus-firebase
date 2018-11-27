@@ -6,6 +6,10 @@ import { Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { UiService } from 'src/app/ui.service';
+import { MatDialog } from '@angular/material';
+import { DeleteFoodDialogComponent } from '../delete-food-dialog/delete-food-dialog.component';
+import { IDiaryEntryData } from 'src/app/diary/planner.service';
+import { Portion } from 'src/app/models/portion';
 
 @Component({
   selector: 'app-edit-food',
@@ -25,7 +29,7 @@ export class EditFoodComponent implements OnInit, OnDestroy {
   public food: Food | undefined;
   private subscription: Subscription;
 
-  constructor(private foodsService: FoodsService, private ui: UiService, private activatedRoute: ActivatedRoute) { }
+  constructor(private foodsService: FoodsService, private ui: UiService, private activatedRoute: ActivatedRoute, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.subscription = this.activatedRoute.paramMap.pipe(
@@ -67,9 +71,18 @@ export class EditFoodComponent implements OnInit, OnDestroy {
 
   onDelete() {
 
-    if (this.food === undefined)
-      return; // tk?
-    this.foodsService.deleteFood(this.food).then(() => this.ui.goBack());
+    const dialogRef = this.dialog.open(DeleteFoodDialogComponent, {
+      data: { food: this.food },
+    });
+
+    dialogRef.afterClosed().subscribe((result: { documents: Array<IDiaryEntryData>, portions: Array<{ date: string, portion: Portion }> }) => {
+      if (result && this.food) {
+        const food = this.food;     // undefined scoped check
+        this.foodsService.deleteFood(food, result.documents).then(() => {
+          this.ui.warn(`Deleted ${food.name} and its ${result.portions.length} portions`);
+        });
+      }
+    });
   }
 
   onDiscard() {
@@ -78,6 +91,10 @@ export class EditFoodComponent implements OnInit, OnDestroy {
 
   public get editable() {
     return this.food !== undefined;
+  }
+
+  public get deletable() {
+    return this.editable;
   }
 
 }

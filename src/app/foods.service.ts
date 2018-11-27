@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap, distinct, publishReplay, take, share } from 'rxjs/operators';
 import { Food } from './foods/food';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
 import { FoodData } from './FoodData';
+import { AuthService } from './auth/auth.service';
+import { IDiaryEntry, IDiaryEntryData } from './diary/planner.service';
+import { PortionData } from './diary/PortionData';
 
 @Injectable({ providedIn: 'root' })
 export class FoodsService {
 
   public readonly foods$: Observable<Food[]>;
 
-  constructor(private readonly af: AngularFirestore) {
+  constructor(private readonly af: AngularFirestore, private auth: AuthService) {
     this.foods$ = af.collection<FoodData>('foods').snapshotChanges().pipe(
       shareReplay(1),
       map(data => data.map(foodData => this.createFood(foodData.payload.doc.data(), foodData.payload.doc.id)
@@ -54,8 +57,28 @@ export class FoodsService {
     this.af.doc(`foods/${food.id}`).set(trimmedFood, { merge: true });
   }
 
-  public deleteFood(food: Food): Promise<void> {
-    return this.af.collection('foods').doc(food.id).delete().catch(error => console.log(error));
+  public deleteFood(food: Food, documents: Array<IDiaryEntryData>): Promise<void> {
+    return this.deleteFoodPortions(food, documents).then(
+      () => this.af.collection('foods').doc(food.id).delete());
+  }
+
+  public getFoodOccurrences(foodID: string) {
+    return this.af.collection<IDiaryEntryData>(`/users/${this.auth.userID}/diary`, ref => ref.where('foods', 'array-contains', foodID)).snapshotChanges();
+  }
+
+  private deleteFoodPortions(food: Food, documents: Array<IDiaryEntryData>): Promise<void> {
+
+    const batch = this.af.firestore.batch();
+
+    for (const doc of documents) {
+      const ref = this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${doc.id}`).ref;
+      batch.update(ref, {
+        portions: doc.portions.filter(portion => portion.foodID !== food.id),
+        foods: doc.foods.filter(id => id !== food.id)
+      });
+    }
+
+    return batch.commit();
   }
 
   public getFilteredFoods(start: BehaviorSubject<string>): Observable<Food[]> {

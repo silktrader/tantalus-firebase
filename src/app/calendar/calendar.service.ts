@@ -15,6 +15,15 @@ export class CalendarService {
     return new Date(YMD.year, YMD.month - 1, YMD.day);
   }
 
+  public static getID(YMD: DateYMD): string {
+    return `${YMD.year}-${YMD.month}-${YMD.day}`;
+  }
+
+  public static IDToYMD(id: string): DateYMD {
+    const numbers = id.split('-');
+    return { year: +numbers[0], month: +numbers[1], day: +numbers[2] };
+  }
+
   public get today(): Date {
     return new Date();
   }

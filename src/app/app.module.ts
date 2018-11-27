@@ -22,6 +22,7 @@ import { SelectPortionComponent } from './diary/select-portion/select-portion.co
 import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.component';
 import { AddPortionComponent } from './diary/add-portion/add-portion.component';
 import { EditPortionComponent } from './diary/edit-portion/edit-portion.component';
+import { DeleteFoodDialogComponent } from './foods/delete-food-dialog/delete-food-dialog.component';
 
 @NgModule({
     declarations: [
@@ -38,6 +39,7 @@ import { EditPortionComponent } from './diary/edit-portion/edit-portion.componen
         DiaryOutletComponent,
         AddPortionComponent,
         EditPortionComponent,
+        DeleteFoodDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -48,6 +50,9 @@ import { EditPortionComponent } from './diary/edit-portion/edit-portion.componen
         CoreModule,
         BrowserAnimationsModule,
         MaterialModule,
+    ],
+    entryComponents: [
+        DeleteFoodDialogComponent
     ],
     providers: [],
     bootstrap: [AppComponent]

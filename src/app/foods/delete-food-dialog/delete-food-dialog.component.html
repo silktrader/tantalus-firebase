@@ -1,0 +1,19 @@
+<h2 mat-dialog-title class="title">Delete {{data.food.name}}</h2>
+<mat-dialog-content>
+  <span>The food and the following portions will be deleted:</span>
+
+  <mat-nav-list>
+    <mat-list-item *ngFor="let item of portions">
+      <a class="portion" [routerLink]="['edit-portion', item.id]" routerLinkActive="active">
+        <span class="portion-date">{{item.date}}</span>
+        <span class="portion-quantity">{{item.portion.quantity | number:'1.0-0'}} g.</span>
+      </a>
+    </mat-list-item>
+  </mat-nav-list>
+
+</mat-dialog-content>
+<mat-dialog-actions class="actions">
+  <button mat-button mat-dialog-close cdkFocusInitial>Abort</button>
+  <!-- pass the documents array to the handler -->
+  <button mat-button [mat-dialog-close]="dialogResult">Delete All</button>
+</mat-dialog-actions>

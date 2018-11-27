@@ -1,0 +1,25 @@
+.title {
+    text-align: center;
+}
+
+.portion {
+    display: flex;
+    width: 100%;
+    font-size: 90%;
+}
+
+.portion-date {
+    flex-basis: 60%;
+    font-weight: 500;
+}
+
+.portion-quantity {
+    flex-basis: 40%;
+    text-align: right;
+    font-style: italic;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-evenly;
+}

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of, combineLatest, BehaviorSubject, Subject, ReplaySubject, Subscription } from 'rxjs';
+import { switchMap, share } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
@@ -24,13 +24,33 @@ export class PlannerService {
   public diaryEntry = new BehaviorSubject<DiaryEntry>(new DiaryEntry([]));
   private dateYMD = new BehaviorSubject<DateYMD>(CalendarService.getYMD(new Date()));
 
+  private subscription: Subscription;
+
   constructor(private auth: AuthService, private af: AngularFirestore, private foodService: FoodsService, private ui: UiService) {
+
+  }
+
+  public focusedMeal = 0;
+
+  public get date(): Readonly<Date> {
+    return this._date;
+  }
+
+  // should this be configurable by users? tk
+  public get availableMealsIDs(): ReadonlyArray<number> {
+    return Meal.mealIDs;
+  }
+
+  public initialise(dateYMD: DateYMD) {
+
+    if (this.subscription)
+      this.subscription.unsubscribe();
 
     let portions: PortionData[];
     let data: IDiaryEntry;
 
-    this.dateYMD.pipe(
-      switchMap(() => this.document.valueChanges()),
+    this.subscription = this.dateYMD.pipe(
+      switchMap(() => this.document.valueChanges().pipe()),
       switchMap(diaryData => {
 
         if (diaryData === undefined) {
@@ -54,28 +74,18 @@ export class PlannerService {
         this.diaryEntry.next(new DiaryEntry(this.createMeals(portions, foods.filter((food: Food | undefined) => food !== undefined) as Food[])));
         this.focusedMeal = this.getLatestMeal(this.diaryEntry.getValue().meals);
       });
-  }
-
-  public focusedMeal = 0;
-
-  public get date(): Readonly<Date> {
-    return this._date;
-  }
-
-  // should this be configurable by users? tk
-  public get availableMealsIDs(): ReadonlyArray<number> {
-    return Meal.mealIDs;
-  }
-
-  public initialise(dateYMD: DateYMD) {
 
     this.dateYMD.next(dateYMD);
     this._date = CalendarService.getDate(dateYMD); // tk change and verify URL!
   }
 
+  public reset() {
+    this.subscription.unsubscribe();
+  }
+
   private get document(): AngularFirestoreDocument<IDiaryEntry> {
-    const { year, month, day } = this.dateYMD.getValue();
-    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${year}-${month}-${day}`);
+    const id = CalendarService.getID(this.dateYMD.getValue());
+    return this.af.doc<IDiaryEntry>(`/users/${this.auth.userID}/diary/${id}`);
   }
 
   private createMeals(portions: PortionData[], foods: Food[]): Meal[] {
@@ -175,21 +185,6 @@ export class PlannerService {
 
   public restoreDay(data: IDiaryEntry): Promise<void> {
 
-    // const foods = new Set<string>();
-    // const portions = new Array<PortionData>();
-
-    // for (const meal of entry.meals) {
-    //   for (const portion of meal.portions) {
-    //     foods.add(portion.foodID);
-    //     portions.push(portion.serialised);
-    //   }
-    // }
-
-    // return (<any>this.document).set({
-    //   portions: portions,
-    //   foods: Array.from(foods)      // spread operator would be faster but not allowed here
-    // });
-
     return (<any>this.document).set(data);
   }
 }
@@ -204,6 +199,11 @@ export interface DateYMD {
 export interface IDiaryEntry {
   comments?: string;
   portions: PortionData[];
+}
+
+export interface IDiaryEntryData extends IDiaryEntry {
+  id: string;
+  foods: Array<string>;
 }
 
 export interface DiaryEntryData {
