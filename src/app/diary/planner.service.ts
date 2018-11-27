@@ -53,7 +53,8 @@ export class PlannerService {
       switchMap(() => this.document.valueChanges().pipe()),
       switchMap(diaryData => {
 
-        if (diaryData === undefined) {
+        // for some reason combineLatest([]) doesn't emit values whereas of([]) does, without emission new diary entries won't be written
+        if (diaryData === undefined || diaryData.portions.length === 0) {
           portions = [];
           return of([]);
         }
@@ -66,8 +67,6 @@ export class PlannerService {
 
         // fetch food observables and assing missing id property
         const foods$: Observable<Food | undefined>[] = foodIDs.map(id => this.foodService.getFood(id));
-
-        // for some reason combineLatest([]) doesn't emit values whereas of([]) does
         return combineLatest(foods$);
       })).subscribe((foods: (Food | undefined)[]) => {
         this.serialisedData = data;
