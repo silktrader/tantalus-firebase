@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Food } from 'src/app/foods/shared/food';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { PlannerService } from '../planner.service';
-import { FoodsService } from 'src/app/foods.service';
+import { FoodsService } from '../../foods/foods.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';

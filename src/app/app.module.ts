@@ -14,7 +14,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FoodsComponent } from './foods/foods.component';
 import { SignoutComponent } from './auth/signout/signout.component';
-import { NavigationComponent } from './navigation/navigation.component';
 import { DiarySummaryComponent } from './diary/diary-summary/diary-summary.component';
 import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
@@ -31,7 +30,6 @@ import { DeleteFoodDialogComponent } from './foods/delete-food-dialog/delete-foo
         CalendarComponent,
         FoodsComponent,
         SignoutComponent,
-        NavigationComponent,
         DiarySummaryComponent,
         AddFoodComponent,
         EditFoodComponent,

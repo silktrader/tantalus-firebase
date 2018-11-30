@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { Food, FoodData } from './foods/shared/food';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Food, FoodData } from './shared/food';
 import * as shortid from 'shortid';
-import { AuthService } from './auth/auth.service';
-import { IDiaryEntry, IDiaryEntryData } from './diary/planner.service';
+import { AuthService } from '../auth/auth.service';
+import { IDiaryEntry, IDiaryEntryData } from '../diary/planner.service';
 
 @Injectable({ providedIn: 'root' })
 export class FoodsService {

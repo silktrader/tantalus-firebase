@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { FoodsService } from 'src/app/foods.service';
+import { FoodsService } from '../foods.service';
 import { Subscription } from 'rxjs';
 import { Portion } from 'src/app/models/portion';
 import { IDiaryEntryData } from 'src/app/diary/planner.service';

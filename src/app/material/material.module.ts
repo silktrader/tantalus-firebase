@@ -25,7 +25,6 @@ import {
   MatBadgeModule,
   MatNativeDateModule
 } from '@angular/material';
-import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
 
 @NgModule({
   imports: [
@@ -45,7 +44,6 @@ import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
     MatSnackBarModule,
     MatCardModule,
     MatExpansionModule,
-    EcoFabSpeedDialModule,
     MatTabsModule,
     MatDialogModule,
     MatButtonToggleModule,
@@ -71,7 +69,6 @@ import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
     MatSnackBarModule,
     MatCardModule,
     MatExpansionModule,
-    EcoFabSpeedDialModule,
     MatTabsModule,
     MatDialogModule,
     MatButtonToggleModule,

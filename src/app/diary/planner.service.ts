@@ -9,7 +9,7 @@ import { PortionData } from './PortionData';
 import { Meal } from '../models/meal';
 import { Food } from '../foods/shared/food';
 import { Portion } from '../models/portion';
-import { FoodsService } from '../foods.service';
+import { FoodsService } from '../foods/foods.service';
 import * as shortid from 'shortid';
 import { DiaryEntry } from '../models/diary-entry';
 import { UiService } from '../ui.service';

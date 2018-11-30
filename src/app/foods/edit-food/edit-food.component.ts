@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { FoodsService } from '../../foods.service';
+import { FoodsService } from '../foods.service';
 import { Food } from '../shared/food';
 import { Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';

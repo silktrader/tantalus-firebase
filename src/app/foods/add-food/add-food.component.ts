@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
-import { FoodsService } from '../../foods.service';
+import { FoodsService } from '../foods.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 

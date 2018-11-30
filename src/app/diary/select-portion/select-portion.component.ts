@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { FoodsService } from 'src/app/foods.service';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { FoodsService } from 'src/app/foods/foods.service';
 import { Food } from 'src/app/foods/shared/food';
-import { Observable, Subscription } from 'rxjs';
 import { PlannerService } from '../planner.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Meal } from 'src/app/models/meal';
