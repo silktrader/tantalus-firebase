@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, combineLatest, BehaviorSubject, Subject, ReplaySubject, Subscription } from 'rxjs';
-import { switchMap, share } from 'rxjs/operators';
+import { Observable, of, combineLatest, BehaviorSubject, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { firestore } from 'firebase';
-import { FoodData } from '../FoodData';
+import { FoodData } from '../foods/shared/food';
 import { PortionData } from './PortionData';
 import { Meal } from '../models/meal';
-import { Food } from '../foods/food';
+import { Food } from '../foods/shared/food';
 import { Portion } from '../models/portion';
 import { FoodsService } from '../foods.service';
 import * as shortid from 'shortid';

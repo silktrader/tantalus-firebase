@@ -38,13 +38,7 @@ export class AddFoodComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     const form = this.addFoodForm.value;
-    this.foodsService.addFood({
-      name: form.name,
-      brand: form.brand,
-      proteins: +form.proteins || 0,
-      carbs: +form.carbs || 0,
-      fats: +form.fats || 0,
-    });
+    this.foodsService.addFood(form);
 
     this.location.back();
   }

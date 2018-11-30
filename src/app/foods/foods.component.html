@@ -2,11 +2,9 @@
   <button class="toolbar-menu" mat-icon-button (click)="uiService.openSidenav()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h3 class="toolbar-title">{{date | date:'longDate'}}</h3>
+  <h3 class="toolbar-title">Foods</h3>
   <span class="toolbar-actions">
-    <button *ngIf="hasContents" mat-icon-button (click)="deleteAll()">
-      <mat-icon>delete_sweep</mat-icon>
-    </button>
+
   </span>
   <mat-datepicker></mat-datepicker>
 </mat-toolbar>

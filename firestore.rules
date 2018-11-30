@@ -23,7 +23,8 @@ service cloud.firestore {
     }    
 
     function meetsFoodSchema() {
-       return request.resource.data.keys().hasOnly(['name', 'searchableName', 'brand', 'proteins', 'carbs', 'fats']) &&
+       return request.resource.data.keys().hasOnly(['name', 'searchableName', 'brand', 'proteins', 'carbs', 'fats',
+       'fibres', 'sugar', 'saturated', 'trans', 'cholesterol', 'sodium']) &&
        request.resource.data.name.size() >= 3 &&
        request.resource.data.proteins >= 0 &&
        request.resource.data.carbs >= 0 &&

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { Food } from './food';
+import { Food } from './shared/food';
 import { FoodsService } from '../foods.service';
 import { Observable, Subscription } from 'rxjs';
 import { distinct } from 'rxjs/operators';

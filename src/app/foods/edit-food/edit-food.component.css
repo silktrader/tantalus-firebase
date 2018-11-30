@@ -1,19 +1,7 @@
-mat-card {
-    margin-bottom: 30px;    
-}
-
-mat-card-content {
+/* mat-card-content {
     display: flex;
     margin-left: 20px;
     margin-right: 20px;
-}
-
-mat-card-title.mat-card-title {
-    font-size: 140%;
-}
-
-mat-card.label > mat-card-content {
-    flex-direction: column;
 }
 
 mat-card.label > mat-card-content > mat-form-field {
@@ -25,16 +13,11 @@ mat-card.label > mat-card-content > mat-form-field {
 mat-card.macronutrients > mat-card-content {
     display: flex;
     flex-direction: row;
-    /* justify-content: space-between; */
-}
-
-mat-form-field {
-
-    padding-top: 20px;
+    /* justify-content: space-between; 
 }
 
 /* nasty hack to prevent angular material from setting inputs to 180px width */
-::ng-deep div.mat-form-field-infix {
+/* ::ng-deep div.mat-form-field-infix {
     width: 30px;
 }
 
@@ -47,6 +30,61 @@ mat-card.macronutrients > mat-card-content > mat-form-field {
 
 mat-card.macronutrients > mat-card-content :last-child {
     padding-right: 0px;
+} */
+
+.toolbar {
+    justify-content: space-between;
+}
+
+.toolbar-item {
+    flex: 1 1 auto;
+}
+
+.toolbar-title {
+    flex-grow: 8;
+    text-align: center;
+}
+
+.edit-card {
+    margin: 20px;
+    margin-top: 30px;
+}
+
+::ng-deep div.mat-form-field-infix {
+    width: 30px;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+}
+
+.label-field {
+    padding: 10px;
+}
+
+.macronutrients-content {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.macronutrients-item {
+    flex-basis: 25%;
+}
+
+.nutrient-details-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.sugars-item {
+    flex-basis: 30%;
+}
+
+.fats-item {
+    flex-basis: 25%;
 }
 
 section.actions {

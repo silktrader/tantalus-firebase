@@ -1,52 +1,132 @@
-<form *ngIf="editable" [formGroup]="addFoodForm" (ngSubmit)="onSubmit()" class="container">
+<mat-toolbar color="primary">
+  <button class="toolbar-menu" mat-icon-button (click)="ui.openSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <h3 class="toolbar-title">Edit Food</h3>
+  <span class="toolbar-actions">
+    <button mat-icon-button>
+      <mat-icon>delete_sweep</mat-icon>
+    </button>
+  </span>
+  <mat-datepicker></mat-datepicker>
+</mat-toolbar>
 
-  <mat-card class="label">
+<form *ngIf="editable" [formGroup]="addFoodForm" (ngSubmit)="onSubmit()">
+  <!-- 
+  <mat-card class="edit-card">
     <mat-card-header>
       <mat-card-title>Food Label</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
-      <mat-form-field appearance="fill">
-        <mat-label>Name</mat-label>
-        <input type="text" matInput placeholder="ex. Eggs, Whole" autocomplete="off" formControlName="name">
-        <mat-hint>Enter the food's name</mat-hint>
-      </mat-form-field>
+      <section class="label">
+        <mat-form-field appearance="fill" class="label-field">
+          <mat-label>Name</mat-label>
+          <input type="text" matInput placeholder="ex. Eggs, Whole" autocomplete="off" formControlName="name">
+          <mat-hint>Enter the food's name</mat-hint>
+        </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Brand</mat-label>
-        <input type="text" matInput placeholder="ex. Knorr" autocomplete="off" formControlName="brand">
-        <mat-hint>Leave empty when irrelevant</mat-hint>
-      </mat-form-field>
+        <mat-form-field appearance="fill" class="label-field">
+          <mat-label>Brand</mat-label>
+          <input type="text" matInput placeholder="ex. Knorr" autocomplete="off" formControlName="brand">
+          <mat-hint>Leave empty when irrelevant</mat-hint>
+        </mat-form-field>
+      </section>
     </mat-card-content>
-  </mat-card>
+  </mat-card> -->
 
-  <mat-card class="macronutrients">
-    <mat-card-header>
-      <mat-card-title>Macronutrients</mat-card-title>
-    </mat-card-header>
+  <mat-form-field class="label-field">
+    <mat-label>Name</mat-label>
+    <input type="text" matInput placeholder="ex. Eggs, Whole" autocomplete="off" formControlName="name">
+    <!-- <mat-hint>Enter the food's name</mat-hint> -->
+  </mat-form-field>
 
-    <mat-card-content>
-      <mat-form-field id="proteins" appearance="fill">
+  <span class="mat-caption">* amounts per 100 g.</span>
+
+  <mat-expansion-panel class="macronutrients edit-card" hideToggle expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Macronutrients
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <section class="macronutrients-content">
+      <mat-form-field appearance="fill" class="macronutrients-item">
         <mat-label>Proteins</mat-label>
         <input type="number" matInput placeholder="ex. 12.25" step="1" min="0" max="99" autocomplete="off"
           formControlName="proteins">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="fill" class="macronutrients-item">
         <mat-label>Carbs</mat-label>
         <input type="number" matInput placeholder="ex. 20" step="1" min="0" max="99" autocomplete="off" formControlName="carbs">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="fill" class="macronutrients-item">
         <mat-label>Fats</mat-label>
         <input type="number" matInput placeholder="ex. 8.8" step="1" min="0" max="99" autocomplete="off"
           formControlName="fats">
         <mat-hint>per 100g.</mat-hint>
       </mat-form-field>
-    </mat-card-content>
-  </mat-card>
+    </section>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="nutrients-details edit-card">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Nutrients Details
+      </mat-panel-title>
+      <mat-panel-description>
+        (optional)
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <section class="sugars nutrient-details-row">
+
+      <mat-form-field appearance="fill" class="sugars-item">
+        <mat-label>Fibres</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="fibres">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="sugars-item">
+        <mat-label>Sugar</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="sugar">
+      </mat-form-field>
+    </section>
+
+    <section class="fats nutrient-details-row">
+
+      <mat-form-field appearance="fill" class="fats-item">
+        <mat-label>Saturated</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="saturated">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="fats-item">
+        <mat-label>Trans</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="trans">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="fats-item">
+        <mat-label>Cholesterol</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="cholesterol">
+      </mat-form-field>
+    </section>
+
+    <section class="nutrient-details-row">
+      <mat-form-field appearance="fill" class="fats-item">
+        <mat-label>Sodium</mat-label>
+        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+          formControlName="sodium">
+      </mat-form-field>
+    </section>
+
+  </mat-expansion-panel>
 
   <section class="actions">
     <button mat-raised-button color="primary" type="submit">Save</button>

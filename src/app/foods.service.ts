@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap, distinct, publishReplay, take, share } from 'rxjs/operators';
-import { Food } from './foods/food';
+import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Food, FoodData } from './foods/shared/food';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as shortid from 'shortid';
-import { FoodData } from './FoodData';
 import { AuthService } from './auth/auth.service';
 import { IDiaryEntry, IDiaryEntryData } from './diary/planner.service';
-import { PortionData } from './diary/PortionData';
 
 @Injectable({ providedIn: 'root' })
 export class FoodsService {
@@ -23,7 +21,7 @@ export class FoodsService {
   }
 
   private createFood(data: FoodData, id: string): Food {
-    return new Food(data, id);
+    return new Food({ id, ...data });
   }
 
   /**
@@ -45,16 +43,24 @@ export class FoodsService {
     return this.af.doc(`foods/${shortid.generate()}`).set({ ...food, searchableName: this.getSearchableName(food.name) });
   }
 
-  public editFood(food: FoodData) {
-    const trimmedFood = {
-      name: food.name,
-      searchableName: this.getSearchableName(food.name),
-      brand: food.brand,
-      proteins: food.proteins,
-      carbs: food.carbs,
-      fats: food.fats
-    };
-    this.af.doc(`foods/${food.id}`).set(trimmedFood, { merge: true });
+  public editFood(data: Readonly<FoodData>): Promise<void> {
+
+    // remove all null values from the form so they aren't stored
+    const sanitisedData = {};
+    for (const [propName, propValue] of Object.entries(data)) {
+      if (propValue === undefined || propValue === null)
+        continue;
+      sanitisedData[propName] = propValue;
+    }
+
+    // the id isn't stored and doesn't meet the schema
+    delete sanitisedData['id'];
+
+    // add a searchable name to facilitate case insensitive search
+    sanitisedData['searchableName'] = this.getSearchableName(data.name);
+
+    // upload the data without deleting those entries which aren't overwritten
+    return this.af.doc(`foods/${data.id}`).set(sanitisedData, { merge: true });
   }
 
   public deleteFood(food: Food, documents: Array<IDiaryEntryData>): Promise<void> {

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Food } from '../../foods/food';
+import { Food } from '../../foods/shared/food';
 import { Meal } from '../../models/meal';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PlannerService } from '../planner.service';

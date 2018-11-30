@@ -1,4 +1,4 @@
-import { Food } from '../foods/food';
+import { Food } from '../foods/shared/food';
 import { PortionData } from '../diary/PortionData';
 
 export class Portion implements PortionData {

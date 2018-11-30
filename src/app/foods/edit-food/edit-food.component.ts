@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FoodsService } from '../../foods.service';
-import { Food } from '../food';
+import { Food } from '../shared/food';
 import { Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -23,7 +23,13 @@ export class EditFoodComponent implements OnInit, OnDestroy {
     brand: new FormControl(),
     proteins: new FormControl(),
     carbs: new FormControl(),
-    fats: new FormControl()
+    fats: new FormControl(),
+    fibres: new FormControl(),
+    sugar: new FormControl(),
+    saturated: new FormControl(),
+    trans: new FormControl(),
+    cholesterol: new FormControl(),
+    sodium: new FormControl()
   });
 
   public food: Food | undefined;
@@ -51,22 +57,23 @@ export class EditFoodComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onSubmit() {
+  onSubmit(): void {
 
-    if (this.food === undefined)
+    // cache food to enable the undo action
+    const food = this.food;
+    if (food === undefined)
       return;
 
+    // read new values, including name
     const form = this.addFoodForm.value;
-    this.foodsService.editFood({
-      id: this.food.id,
-      name: form.name,
-      brand: form.brand,
-      proteins: +form.proteins || 0,
-      carbs: +form.carbs || 0,
-      fats: +form.fats || 0,
-    });
 
-    this.ui.goBack();
+    this.foodsService.editFood({ id: food.id, ...form }).then(() => {
+      this.ui.notify(`Changed ${form.name}`, 'Undo', () => {
+        this.foodsService.editFood(food.deserialised);
+        this.ui.warn(`Reverted changes to ${food.name}`);
+      });
+      this.ui.goBack();
+    });
   }
 
   onDelete() {

@@ -4,7 +4,7 @@ import { FoodsService } from 'src/app/foods.service';
 import { Subscription } from 'rxjs';
 import { Portion } from 'src/app/models/portion';
 import { IDiaryEntryData } from 'src/app/diary/planner.service';
-import { Food } from '../food';
+import { Food } from '../shared/food';
 
 export interface DeleteFoodDialogData {
   food: Food;
