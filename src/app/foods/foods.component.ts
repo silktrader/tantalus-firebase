@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { MatTableDataSource, MatSort, MatPaginator, MatToolbar } from '@angular/material';
 import { Food } from './shared/food';
 import { FoodsService } from './foods.service';
-import { Subscription } from 'rxjs';
+import { Subscription, of, fromEvent } from 'rxjs';
+import { map, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UiService } from '../ui.service';
 import { FormControl } from '@angular/forms';
@@ -40,6 +41,9 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  @ViewChild('tableControls') tableControls: ElementRef;
+  @ViewChild(MatToolbar) toolbar: MatToolbar;
+
   private readonly integerProperties = new Set(['calories', 'proteins', 'carbs', 'fats']);
 
   // might have to use AfterViewInit
@@ -54,6 +58,24 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+
+    // listen to height changes
+    const $resizeEvent = fromEvent(window, 'resize').pipe(
+      map(() => {
+        if (document && document.documentElement)
+          return document.documentElement.clientHeight;
+        return 800;
+      }),
+      debounceTime(200));
+
+    // possibly unnecessary subscription registration
+    this.subscription.add($resizeEvent.subscribe((data: number) => {
+      this.paginator._changePageSize(this.calculateRowsNumber(data));
+    }));
+
+    // set the initial page size
+    if (document && document.documentElement)
+      this.paginator.pageSize = this.calculateRowsNumber(document.documentElement.clientHeight);
   }
 
   ngOnDestroy(): void {
@@ -85,5 +107,16 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private selectColumns(key: string): Array<string> {
     return ['name', ...this.availableColumnSets.get(key) || ['calories']];
+  }
+
+  private calculateRowsNumber(availableHeight: number): number {
+
+    // less than ideal calculations due to tight coupling with rendering layer
+    const tableControlsHeight = (this.tableControls.nativeElement as HTMLElement).offsetHeight;
+    const toolbarHeight = this.toolbar._elementRef.nativeElement.offsetHeight;
+    const headerHeight = 56;
+    const rowHeight = 50;
+    const paginatorHeight = 56;
+    return Math.floor((availableHeight - tableControlsHeight - toolbarHeight - headerHeight - paginatorHeight) / rowHeight);
   }
 }

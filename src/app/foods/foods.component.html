@@ -11,7 +11,7 @@
 </mat-toolbar>
 
 <section>
-  <section class="table-controls">
+  <section #tableControls class="table-controls">
     <mat-form-field class="table-filter">
       <input matInput type="text" (keyup)="doFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
@@ -37,6 +37,8 @@
     <mat-row *matRowDef="let food; columns: selectedColumns;" (click)="edit(food)" matRipple></mat-row>
   </mat-table>
 
-  <mat-paginator class="paginator" [pageSize]="10" showFirstLastButtons hidePageSize>
+  <mat-paginator class="paginator" showFirstLastButtons hidePageSize>
   </mat-paginator>
+
+  <mat-divider></mat-divider>
 </section>
