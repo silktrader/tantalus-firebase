@@ -22,3 +22,38 @@ mat-row:hover {
 mat-row:active {
   background: #efefef;
 }
+
+.table-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.table-filter {
+    flex-basis: 40%;    
+}
+
+.table-selector {
+    flex-basis: 40%;
+}
+
+.cell {
+    display: flex;
+}
+
+.name {
+    display: flex;
+    flex-basis: 40%;
+    overflow: visible;
+    white-space: nowrap;
+}
+
+.calories, .proteins, .carbs, .fats {
+    display: flex;
+    flex-basis: 20%;
+    justify-content: flex-end;
+}
+
+.paginator {
+    width: 100%;
+}
