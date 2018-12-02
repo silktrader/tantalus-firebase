@@ -3,6 +3,8 @@ import { MatSidenav, MatDrawerToggleResult, MatSnackBar } from '@angular/materia
 import { Location } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ReplaySubject } from 'rxjs';
+import { Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
@@ -12,7 +14,7 @@ export class UiService {
   public mobile = new ReplaySubject<boolean>(1);
   public desktop = new ReplaySubject<boolean>(1);
 
-  constructor(private snackBar: MatSnackBar, private location: Location, private breakpointObserver: BreakpointObserver) {
+  constructor(private router: Router, private snackBar: MatSnackBar, private location: Location, private breakpointObserver: BreakpointObserver) {
     this.breakpointObserver.observe(['(max-width: 959px', '(min-width: 960px)']).subscribe(result => {
 
       if (!result.matches)
@@ -22,6 +24,13 @@ export class UiService {
       this.mobile.next(result.breakpoints['(max-width: 959px']);
       this.desktop.next(result.breakpoints['(min-width: 960px)']);
     });
+
+    // close the sidenav in mobile mode when changing routes
+    this.router.events.pipe(
+      switchMap(() => this.mobile)).subscribe(isMobile => {
+        if (isMobile)
+          this.sidenav.close();
+      });
   }
 
   public setSidenav(sidenav: MatSidenav) {
