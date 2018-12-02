@@ -50,7 +50,7 @@ export class PlannerService {
     let data: IDiaryEntry;
 
     this.subscription = this.dateYMD.pipe(
-      switchMap(() => this.document.valueChanges().pipe()),
+      switchMap(() => this.document.valueChanges()),
       switchMap(diaryData => {
 
         // for some reason combineLatest([]) doesn't emit values whereas of([]) does, without emission new diary entries won't be written

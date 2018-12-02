@@ -28,14 +28,17 @@ mat-row:active {
     height: 60px;
     display: flex;
     justify-content: space-evenly;
+    align-items: baseline;
 }
 
 .table-filter {
-    flex-basis: 40%;    
+    flex-basis: 40%;
+    max-width: 30ch;
 }
 
 .table-selector {
     flex-basis: 40%;
+    max-width: 30ch;
 }
 
 .cell {

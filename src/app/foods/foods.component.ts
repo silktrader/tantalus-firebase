@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, MatToolbar } from '@angular/material';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { MatTableDataSource, MatSort, MatPaginator, MatToolbar, MatButtonToggleGroup } from '@angular/material';
 import { Food } from './shared/food';
 import { FoodsService } from './foods.service';
 import { Subscription, of, fromEvent } from 'rxjs';
-import { map, debounceTime } from 'rxjs/operators';
+import { map, debounceTime, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UiService } from '../ui.service';
 import { FormControl } from '@angular/forms';
@@ -15,14 +15,18 @@ import { FormControl } from '@angular/forms';
 })
 export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  constructor(private foodsService: FoodsService, public uiService: UiService, private router: Router) { }
+  constructor(private foodsService: FoodsService, public ui: UiService, private router: Router, private changeDetector: ChangeDetectorRef) { }
 
-  displayedColumns = ['name', 'proteins', 'carbs', 'fats', 'calories'];
   selectedColumns = ['name', 'calories'];
 
-  private readonly availableColumnSets = new Map<string, Array<string>>([
+  private readonly mobileColumnSets = new Map<string, Array<string>>([
     ['Calories', ['calories']],
     ['Macronutrients', ['proteins', 'carbs', 'fats']]
+  ]);
+
+  private readonly desktopColumnSets = new Map<string, Array<string>>([
+    ['Overview', ['proteins', 'carbs', 'fats', 'calories']],
+    ['Carbohydrates', ['carbs', 'fibres', 'sugar', 'carbsPercentage']]
   ]);
 
   public readonly columnNames = new Map<string, string>([
@@ -30,10 +34,14 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
     ['calories', 'Calories'],
     ['proteins', 'Proteins'],
     ['carbs', 'Carbs'],
-    ['fats', 'Fats']
+    ['fats', 'Fats'],
+    ['fibres', 'Fibres'],
+    ['sugar', 'Sugar'],
+    ['carbsPercentage', 'Calories %']
   ]);
 
   public columnSelector = new FormControl();
+  @ViewChild(MatButtonToggleGroup) public columnToggle: MatButtonToggleGroup;
 
   public dataSource: MatTableDataSource<Food> = new MatTableDataSource<Food>();
   private subscription = new Subscription();
@@ -45,13 +53,53 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatToolbar) toolbar: MatToolbar;
 
   private readonly integerProperties = new Set(['calories', 'proteins', 'carbs', 'fats']);
+  private readonly oneDecimalProperties = new Set(['fibres', 'sugar']);
+  private readonly percentageProperties = new Set(['carbsPercentage']);
+
+  public desktop = false;
 
   // might have to use AfterViewInit
   ngOnInit(): void {
     this.subscription.add(this.foodsService.foods$.subscribe((foods: Food[]) => this.dataSource.data = foods));
 
     // sets up the colums selector and specify a default value
-    this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.selectedColumns = this.selectColumns(value)));
+    // this.subscription.add(this.ui.mobile.subscribe(() => {
+    //   this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.selectedColumns = this.selectMobileColumns(value)));
+    // }));
+
+    this.ui.mobile.pipe(
+      switchMap(isMobile => isMobile ? this.columnSelector.valueChanges : of(undefined)))
+      .subscribe(value => {
+        if (value === undefined)
+          return;
+        this.selectedColumns = this.selectMobileColumns(value);
+      });
+
+    this.ui.desktop.pipe(
+      switchMap((isDesktop) => {
+        if (!isDesktop) {
+          this.desktop = false;
+          return of(undefined);
+        }
+
+        this.desktop = true;
+        this.changeDetector.detectChanges();
+        this.columnToggle.value = 'Overview';
+        this.selectedColumns = this.selectDesktopColumns(this.columnToggle.value);
+        return this.columnToggle.valueChange.asObservable();
+      }))
+      .subscribe(value => {
+        if (value === undefined)
+          return;
+        this.selectedColumns = this.selectDesktopColumns(value);
+      });
+
+    //   this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.selectedColumns = this.selectMobileColumns(value)));
+    // }))
+
+    // this.subscription.add(this.ui.desktop.subscribe)
+    // this.subscription.add(this.columnToggle.valueChange.subscribe(value => this.selectedColumns = this.selectDesktopColumns(value)));
+
     this.columnSelector.setValue('Calories');
   }
 
@@ -92,21 +140,30 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public format(name: string, item: any): string {
 
-    if (typeof item !== 'number')
-      return item;
+    if (typeof item === 'number') {
 
-    if (this.integerProperties.has(name))
-      return this.formatInteger(item);
+      if (this.integerProperties.has(name))
+        return item.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-    return 'na';
+      if (this.oneDecimalProperties.has(name))
+        return item.toLocaleString(undefined, { maximumFractionDigits: 1 });
+
+      if (this.percentageProperties.has(name))
+        return item.toLocaleString(undefined, { style: 'percent' });
+    }
+
+    if (typeof item === 'undefined')
+      return '';
+
+    return item;
   }
 
-  private formatInteger(number: number): string {
-    return number.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  private selectMobileColumns(key: string): Array<string> {
+    return ['name', ...this.mobileColumnSets.get(key) || []];
   }
 
-  private selectColumns(key: string): Array<string> {
-    return ['name', ...this.availableColumnSets.get(key) || ['calories']];
+  public selectDesktopColumns(key: string): Array<string> {
+    return ['name', ...this.desktopColumnSets.get(key) || []];
   }
 
   private calculateRowsNumber(availableHeight: number): number {

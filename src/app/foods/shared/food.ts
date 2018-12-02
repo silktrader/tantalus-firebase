@@ -42,6 +42,10 @@ export class Food extends FoodData {
         return Math.round(this.calories);
     }
 
+    get carbsPercentage(): number {
+        return this.carbs * 4 / this.calories;
+    }
+
     get deserialised(): FoodData {
         return this.data;
     }

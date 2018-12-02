@@ -22,6 +22,7 @@ import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.componen
 import { AddPortionComponent } from './diary/add-portion/add-portion.component';
 import { EditPortionComponent } from './diary/edit-portion/edit-portion.component';
 import { DeleteFoodDialogComponent } from './foods/delete-food-dialog/delete-food-dialog.component';
+import { LayoutModule } from '@angular/cdk/layout';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { DeleteFoodDialogComponent } from './foods/delete-food-dialog/delete-foo
     ],
     imports: [
         BrowserModule,
+        LayoutModule,
         RoutingModule,
         FormsModule,
         ReactiveFormsModule,
