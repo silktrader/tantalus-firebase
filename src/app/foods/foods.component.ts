@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator, MatToolbar, MatButtonToggleGroup } from '@angular/material';
-import { Food } from './shared/food';
+import { Food, FoodProp } from './shared/food';
 import { FoodsService } from './foods.service';
 import { Subscription, of, fromEvent } from 'rxjs';
-import { map, debounceTime, switchMap, tap } from 'rxjs/operators';
+import { map, debounceTime, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UiService } from '../ui.service';
 import { FormControl } from '@angular/forms';
@@ -17,27 +17,31 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private foodsService: FoodsService, public ui: UiService, private router: Router, private changeDetector: ChangeDetectorRef) { }
 
-  selectedColumns = ['name', 'calories'];
+  public selectedColumns: Array<FoodProp> = new Array<FoodProp>();
 
-  private readonly mobileColumnSets = new Map<string, Array<string>>([
-    ['Calories', ['calories']],
-    ['Macronutrients', ['proteins', 'carbs', 'fats']]
+  private readonly mobileColumnSets = new Map<string, Array<FoodProp>>([
+    ['Overview', [FoodProp.detailsPercentage, FoodProp.calories]],
+    ['Macronutrients', [FoodProp.proteins, FoodProp.carbs, FoodProp.fats]]
   ]);
 
-  private readonly desktopColumnSets = new Map<string, Array<string>>([
-    ['Overview', ['proteins', 'carbs', 'fats', 'calories']],
-    ['Carbohydrates', ['carbs', 'fibres', 'sugar', 'carbsPercentage']]
+  private readonly desktopColumnSets = new Map<string, Array<FoodProp>>([
+    ['Overview', [FoodProp.detailsPercentage, FoodProp.proteins, FoodProp.carbs, FoodProp.fats, FoodProp.calories]],
+    ['Carbohydrates', [FoodProp.carbs, FoodProp.fibres, FoodProp.sugar, FoodProp.carbsPercentage]],
+    ['Fats', [FoodProp.fats, FoodProp.saturated, FoodProp.trans, FoodProp.cholesterol, FoodProp.fatPercentage]]
   ]);
 
-  public readonly columnNames = new Map<string, string>([
-    ['name', 'Name'],
-    ['calories', 'Calories'],
-    ['proteins', 'Proteins'],
-    ['carbs', 'Carbs'],
-    ['fats', 'Fats'],
-    ['fibres', 'Fibres'],
-    ['sugar', 'Sugar'],
-    ['carbsPercentage', 'Calories %']
+  public readonly columnNames = new Map<FoodProp, string>([
+    [FoodProp.name, 'Name'],
+    [FoodProp.calories, 'Calories'],
+    [FoodProp.proteins, 'Proteins'],
+    [FoodProp.carbs, 'Carbs'],
+    [FoodProp.fats, 'Fats'],
+    [FoodProp.fibres, 'Fibres'],
+    [FoodProp.sugar, 'Sugar'],
+    [FoodProp.carbsPercentage, 'Calories %'],
+    [FoodProp.fatPercentage, 'Calories %'],
+    [FoodProp.proteinsPercentage, 'Calories %'],
+    [FoodProp.detailsPercentage, 'Details %']
   ]);
 
   public columnSelector = new FormControl();
@@ -52,20 +56,15 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tableControls') tableControls: ElementRef;
   @ViewChild(MatToolbar) toolbar: MatToolbar;
 
-  private readonly integerProperties = new Set(['calories', 'proteins', 'carbs', 'fats']);
-  private readonly oneDecimalProperties = new Set(['fibres', 'sugar']);
-  private readonly percentageProperties = new Set(['carbsPercentage']);
+  private readonly integerProperties = new Set([FoodProp.calories, FoodProp.proteins, FoodProp.carbs, FoodProp.fats]);
+  private readonly oneDecimalProperties: Set<FoodProp> = new Set([FoodProp.fibres, FoodProp.sugar]);
+  private readonly percentageProperties = new Set([FoodProp.proteinsPercentage, FoodProp.carbsPercentage, FoodProp.fatPercentage, FoodProp.detailsPercentage]);
 
   public desktop = false;
 
   // might have to use AfterViewInit
   ngOnInit(): void {
     this.subscription.add(this.foodsService.foods$.subscribe((foods: Food[]) => this.dataSource.data = foods));
-
-    // sets up the colums selector and specify a default value
-    // this.subscription.add(this.ui.mobile.subscribe(() => {
-    //   this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.selectedColumns = this.selectMobileColumns(value)));
-    // }));
 
     this.ui.mobile.pipe(
       switchMap(isMobile => isMobile ? this.columnSelector.valueChanges : of(undefined)))
@@ -93,12 +92,6 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         this.selectedColumns = this.selectDesktopColumns(value);
       });
-
-    //   this.subscription.add(this.columnSelector.valueChanges.subscribe(value => this.selectedColumns = this.selectMobileColumns(value)));
-    // }))
-
-    // this.subscription.add(this.ui.desktop.subscribe)
-    // this.subscription.add(this.columnToggle.valueChange.subscribe(value => this.selectedColumns = this.selectDesktopColumns(value)));
 
     this.columnSelector.setValue('Calories');
   }
@@ -138,32 +131,32 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/food', food.id]);
   }
 
-  public format(name: string, item: any): string {
+  public format(prop: FoodProp, item: any): string {
 
     if (typeof item === 'number') {
 
-      if (this.integerProperties.has(name))
+      if (this.integerProperties.has(prop))
         return item.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-      if (this.oneDecimalProperties.has(name))
+      if (this.oneDecimalProperties.has(prop))
         return item.toLocaleString(undefined, { maximumFractionDigits: 1 });
 
-      if (this.percentageProperties.has(name))
+      if (this.percentageProperties.has(prop))
         return item.toLocaleString(undefined, { style: 'percent' });
     }
 
     if (typeof item === 'undefined')
-      return '';
+      return '∅';
 
     return item;
   }
 
-  private selectMobileColumns(key: string): Array<string> {
-    return ['name', ...this.mobileColumnSets.get(key) || []];
+  private selectMobileColumns(key: string): Array<FoodProp> {
+    return [FoodProp.name, ...this.mobileColumnSets.get(key) || []];
   }
 
-  public selectDesktopColumns(key: string): Array<string> {
-    return ['name', ...this.desktopColumnSets.get(key) || []];
+  public selectDesktopColumns(key: string): Array<FoodProp> {
+    return [FoodProp.name, ...this.desktopColumnSets.get(key) || []];
   }
 
   private calculateRowsNumber(availableHeight: number): number {

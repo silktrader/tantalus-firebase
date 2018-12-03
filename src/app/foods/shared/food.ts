@@ -21,9 +21,26 @@ export class FoodData {
     public readonly sodium?: number;
 }
 
-export class Food extends FoodData {
+export enum FoodProp {
+    name = 'name',
+    calories = 'calories',
+    proteins = 'proteins',
+    carbs = 'carbs',
+    fats = 'fats',
+    brand = 'brand',
+    fibres = 'fibres',
+    sugar = 'sugar',
+    saturated = 'saturated',
+    trans = 'trans',
+    cholesterol = 'cholesterol',
+    sodium = 'sodium',
+    fatPercentage = 'fatsPercentage',
+    carbsPercentage = 'carbsPercentage',
+    proteinsPercentage = 'proteinsPercentage',
+    detailsPercentage = 'detailsPercentage'
+}
 
-    private readonly data: FoodData;
+export class Food extends FoodData {
 
     constructor(data: FoodData) {
         super();
@@ -46,7 +63,22 @@ export class Food extends FoodData {
         return this.carbs * 4 / this.calories;
     }
 
+    get detailsPercentage(): number {
+
+        let undefinedProperties = 0;
+        for (const prop of Food.detailProperties) {
+            if (this.data[prop] === undefined)
+                undefinedProperties++;
+        }
+        return 1 - undefinedProperties / Food.detailProperties.length;
+    }
+
     get deserialised(): FoodData {
         return this.data;
     }
+
+    private static readonly detailProperties = [FoodProp.fibres, FoodProp.sugar,
+    FoodProp.saturated, FoodProp.trans, FoodProp.cholesterol, FoodProp.sodium];
+
+    private readonly data: FoodData;
 }
