@@ -27,7 +27,8 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly desktopColumnSets = new Map<string, Array<FoodProp>>([
     ['Overview', [FoodProp.detailsPercentage, FoodProp.proteins, FoodProp.carbs, FoodProp.fats, FoodProp.calories]],
     ['Carbohydrates', [FoodProp.carbs, FoodProp.fibres, FoodProp.sugar, FoodProp.carbsPercentage]],
-    ['Fats', [FoodProp.fats, FoodProp.saturated, FoodProp.trans, FoodProp.cholesterol, FoodProp.fatPercentage]]
+    ['Fats', [FoodProp.fats, FoodProp.saturated, FoodProp.trans, FoodProp.cholesterol, FoodProp.fatPercentage]],
+    ['Minerals', [FoodProp.sodium, FoodProp.potassium, FoodProp.magnesium, FoodProp.iron, FoodProp.zinc, FoodProp.calcium]]
   ]);
 
   public readonly columnNames = new Map<FoodProp, string>([
@@ -41,7 +42,16 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
     [FoodProp.carbsPercentage, 'Calories %'],
     [FoodProp.fatPercentage, 'Calories %'],
     [FoodProp.proteinsPercentage, 'Calories %'],
-    [FoodProp.detailsPercentage, 'Details %']
+    [FoodProp.detailsPercentage, 'Details %'],
+    [FoodProp.cholesterol, 'Cholesterol'],
+    [FoodProp.saturated, 'Saturated'],
+    [FoodProp.trans, 'Trans'],
+    [FoodProp.sodium, 'Sodium'],
+    [FoodProp.potassium, 'Potassium'],
+    [FoodProp.calcium, 'Calcium'],
+    [FoodProp.magnesium, 'Magnesium'],
+    [FoodProp.zinc, 'Zinc'],
+    [FoodProp.iron, 'Iron'],
   ]);
 
   public columnSelector = new FormControl();

@@ -1,4 +1,3 @@
-
 /**
  * Model class substituting interface to remove duplication of fields in children classes: stores data, can't feature properties
  */
@@ -9,7 +8,8 @@ export class FoodData {
     public readonly carbs: number;
     public readonly fats: number;
 
-    public readonly brand?: string;
+    public readonly source?: string;
+    public readonly notes?: string;
 
     public readonly fibres?: number;
     public readonly sugar?: number;
@@ -22,18 +22,22 @@ export class FoodData {
 }
 
 export enum FoodProp {
-    name = 'name',
+    name = 'name', source = 'source', notes = 'notes',
     calories = 'calories',
     proteins = 'proteins',
     carbs = 'carbs',
     fats = 'fats',
-    brand = 'brand',
     fibres = 'fibres',
     sugar = 'sugar',
     saturated = 'saturated',
     trans = 'trans',
     cholesterol = 'cholesterol',
     sodium = 'sodium',
+    potassium = 'potassium',
+    calcium = 'calcium',
+    zinc = 'zinc',
+    magnesium = 'magnesium',
+    iron = 'iron',
     fatPercentage = 'fatsPercentage',
     carbsPercentage = 'carbsPercentage',
     proteinsPercentage = 'proteinsPercentage',
@@ -59,12 +63,19 @@ export class Food extends FoodData {
         return Math.round(this.calories);
     }
 
+    get proteinsPercentage(): number {
+        return this.proteins * 4 / this.calories;
+    }
+
     get carbsPercentage(): number {
         return this.carbs * 4 / this.calories;
     }
 
-    get detailsPercentage(): number {
+    get fatsPercentage(): number {
+        return this.fats * 9 / this.calories;
+    }
 
+    get detailsPercentage(): number {
         let undefinedProperties = 0;
         for (const prop of Food.detailProperties) {
             if (this.data[prop] === undefined)

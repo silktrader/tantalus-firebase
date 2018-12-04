@@ -20,7 +20,6 @@ export class EditFoodComponent implements OnInit, OnDestroy {
 
   addFoodForm = new FormGroup({
     name: new FormControl(),
-    brand: new FormControl(),
     proteins: new FormControl(),
     carbs: new FormControl(),
     fats: new FormControl(),

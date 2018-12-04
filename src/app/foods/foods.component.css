@@ -43,17 +43,18 @@ mat-row:active {
 
 .cell {
     display: flex;
+    justify-content: flex-end;
+    flex-basis: 10%;
 }
 
 .name {
-    display: flex;
     flex-basis: 40%;
     overflow: visible;
     white-space: nowrap;
+    justify-content: flex-start;
 }
 
 .calories, .proteins, .carbs, .fats, .sugar, .fibres, .carbsPercentage, .detailsPercentage {
-    display: flex;
     flex-basis: 10%;
     justify-content: flex-end;
 }
