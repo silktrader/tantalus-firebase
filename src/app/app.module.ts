@@ -15,7 +15,6 @@ import { MaterialModule } from './material/material.module';
 import { FoodsComponent } from './foods/foods.component';
 import { SignoutComponent } from './auth/signout/signout.component';
 import { DiarySummaryComponent } from './diary/diary-summary/diary-summary.component';
-import { AddFoodComponent } from './foods/add-food/add-food.component';
 import { EditFoodComponent } from './foods/edit-food/edit-food.component';
 import { SelectPortionComponent } from './diary/select-portion/select-portion.component';
 import { DiaryOutletComponent } from './diary/diary-outlet/diary-outlet.component';
@@ -32,7 +31,6 @@ import { LayoutModule } from '@angular/cdk/layout';
         FoodsComponent,
         SignoutComponent,
         DiarySummaryComponent,
-        AddFoodComponent,
         EditFoodComponent,
         SelectPortionComponent,
         DiaryOutletComponent,

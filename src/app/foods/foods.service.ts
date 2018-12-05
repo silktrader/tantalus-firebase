@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable ,  BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Food, FoodData } from './shared/food';
 import * as shortid from 'shortid';
@@ -33,13 +33,17 @@ export class FoodsService {
     return name.toLowerCase();
   }
 
+  public generateID(): string {
+    return shortid.generate();
+  }
+
   // tk handle missing food gracefully
   public getFood(id: string): Observable<Food | undefined> {
     return this.af.doc<FoodData>(`foods/${id}`).valueChanges().pipe(map(data => data ? this.createFood(data, id) : undefined));
   }
 
   public addFood(food: FoodData): Promise<void> {
-    return this.af.doc(`foods/${shortid.generate()}`).set({ ...food, searchableName: this.getSearchableName(food.name) });
+    return this.af.doc(`foods/${this.generateID()}`).set({ ...food, searchableName: this.getSearchableName(food.name) });
   }
 
   public editFood(data: Readonly<FoodData>): Promise<void> {

@@ -4,7 +4,6 @@ import { CalendarComponent } from '../calendar/calendar.component';
 import { LoginComponent } from '../auth/login/login.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { FoodsComponent } from '../foods/foods.component';
-import { AddFoodComponent } from '../foods/add-food/add-food.component';
 import { EditFoodComponent } from '../foods/edit-food/edit-food.component';
 import { DiarySummaryComponent } from '../diary/diary-summary/diary-summary.component';
 import { SelectPortionComponent } from '../diary/select-portion/select-portion.component';
@@ -16,7 +15,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
   { path: 'foods', component: FoodsComponent, canActivate: [AuthGuard] },
-  { path: 'add-food', component: AddFoodComponent, canActivate: [AuthGuard] },
+  { path: 'add-food', component: EditFoodComponent, canActivate: [AuthGuard] },
   { path: 'food/:id', component: EditFoodComponent, canActivate: [AuthGuard] },
   {
     path: 'diary/:year/:month/:day', component: DiaryOutletComponent, canActivate: [AuthGuard],
