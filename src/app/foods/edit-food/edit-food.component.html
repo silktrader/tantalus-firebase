@@ -1,10 +1,10 @@
 <mat-toolbar color="primary">
-  <button class="toolbar-menu" mat-icon-button (click)="ui.openSidenav()">
-    <mat-icon>menu</mat-icon>
+  <button class="toolbar-item" mat-icon-button (click)="ui.goBack()">
+    <mat-icon>arrow_back</mat-icon>
   </button>
   <h3 class="toolbar-title">Edit Food</h3>
   <span class="toolbar-actions">
-    <button mat-icon-button>
+    <button mat-icon-button (click)="onDelete()" [disabled]="!deletable">
       <mat-icon>delete_sweep</mat-icon>
     </button>
   </span>
@@ -12,71 +12,55 @@
 </mat-toolbar>
 
 <form *ngIf="editable" [formGroup]="addFoodForm" (ngSubmit)="onSubmit()">
-  <!-- 
-  <mat-card class="edit-card">
-    <mat-card-header>
-      <mat-card-title>Food Label</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <section class="label">
-        <mat-form-field appearance="fill" class="label-field">
-          <mat-label>Name</mat-label>
-          <input type="text" matInput placeholder="ex. Eggs, Whole" autocomplete="off" formControlName="name">
-          <mat-hint>Enter the food's name</mat-hint>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="label-field">
-          <mat-label>Brand</mat-label>
-          <input type="text" matInput placeholder="ex. Knorr" autocomplete="off" formControlName="brand">
-          <mat-hint>Leave empty when irrelevant</mat-hint>
-        </mat-form-field>
-      </section>
-    </mat-card-content>
-  </mat-card> -->
 
   <section class="label">
-    <button class="label-favourite" mat-icon-button>
-      <mat-icon>star_border</mat-icon>
-    </button>
-    <mat-form-field class="label-field">
-      <!-- <mat-label>Name</mat-label> -->
-      <input type="text" matInput autocomplete="off" formControlName="name">
-      <!-- <mat-hint>Enter the food's name</mat-hint> -->
-    </mat-form-field>
-    <button class="label-favourite" mat-icon-button>
-      <mat-icon>star_border</mat-icon>
-    </button>
+    <section class="label-favourite">
+      <button type="button" class="label-favourite-button" mat-icon-button>
+        <mat-icon>star_border</mat-icon>
+      </button>
+    </section>
+    <section class="label-name">
+      <mat-form-field class="label-name-field">
+        <!-- <mat-label>Name</mat-label> -->
+        <input type="text" matInput required minlength="4" maxlength="35" autocomplete="off" formControlName="name">
+        <!-- <mat-hint>Enter the food's name</mat-hint> -->
+      </mat-form-field>
+    </section>
+    <section class="label-details">
+      <span class=label-details-percentage>{{food.detailsPercentage | percent}}</span>
+    </section>
   </section>
 
-  <mat-expansion-panel class="macronutrients edit-card" hideToggle expanded>
+  <section class="macronutrients">
+    <mat-form-field appearance="fill" class="macronutrients-item">
+      <mat-label>Proteins (g.)</mat-label>
+      <input type="number" matInput placeholder="ex. 12.25" step="1" min="0" max="99" autocomplete="off"
+        formControlName="proteins">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="macronutrients-item">
+      <mat-label>Carbs (g.)</mat-label>
+      <input type="number" matInput placeholder="ex. 20" step="1" min="0" max="99" autocomplete="off" formControlName="carbs">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="macronutrients-item">
+      <mat-label>Fats (g.)</mat-label>
+      <input type="number" matInput placeholder="ex. 8.8" step="1" min="0" max="99" autocomplete="off" formControlName="fats">
+    </mat-form-field>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section class="mat-caption optional-notice">optional fields</section>
+
+  <!-- <mat-expansion-panel class="macronutrients edit-card" hideToggle expanded>
     <mat-expansion-panel-header>
       <mat-panel-title>
         Macronutrients
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <section class="macronutrients-content">
-      <mat-form-field appearance="fill" class="macronutrients-item">
-        <mat-label>Proteins</mat-label>
-        <input type="number" matInput placeholder="ex. 12.25" step="1" min="0" max="99" autocomplete="off"
-          formControlName="proteins">
-        <mat-hint>per 100g.</mat-hint>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="macronutrients-item">
-        <mat-label>Carbs</mat-label>
-        <input type="number" matInput placeholder="ex. 20" step="1" min="0" max="99" autocomplete="off" formControlName="carbs">
-        <mat-hint>per 100g.</mat-hint>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="macronutrients-item">
-        <mat-label>Fats</mat-label>
-        <input type="number" matInput placeholder="ex. 8.8" step="1" min="0" max="99" autocomplete="off"
-          formControlName="fats">
-        <mat-hint>per 100g.</mat-hint>
-      </mat-form-field>
-    </section>
-  </mat-expansion-panel>
+    
+  </mat-expansion-panel> -->
 
   <mat-expansion-panel class="nutrients-details edit-card">
     <mat-expansion-panel-header>
@@ -88,55 +72,135 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <section class="sugars nutrient-details-row">
+    <section class="details">
 
-      <mat-form-field appearance="fill" class="sugars-item">
-        <mat-label>Fibres</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="fibres">
-      </mat-form-field>
+      <section class="carbs-column">
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Fibres (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="fibres">
+        </mat-form-field>
 
-      <mat-form-field appearance="fill" class="sugars-item">
-        <mat-label>Sugar</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="sugar">
-      </mat-form-field>
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Sugar (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="sugar">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Starch (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="starch">
+        </mat-form-field>
+      </section>
+      <mat-divider [vertical]="true"></mat-divider>
+      <section class="fats-column">
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Saturated Fat (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="saturated">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Trans Fat (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="trans">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Cholesterol (g.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="cholesterol">
+        </mat-form-field>
+      </section>
+
     </section>
-
-    <section class="fats nutrient-details-row">
-
-      <mat-form-field appearance="fill" class="fats-item">
-        <mat-label>Saturated</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="saturated">
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="fats-item">
-        <mat-label>Trans</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="trans">
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="fats-item">
-        <mat-label>Cholesterol</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="cholesterol">
-      </mat-form-field>
-    </section>
-
-    <section class="nutrient-details-row">
-      <mat-form-field appearance="fill" class="fats-item">
-        <mat-label>Sodium</mat-label>
-        <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
-          formControlName="sodium">
-      </mat-form-field>
-    </section>
-    <span class="mat-caption">* amounts in milligrams</span>
   </mat-expansion-panel>
 
-  <section class="actions">
-    <button mat-raised-button color="primary" type="submit">Save</button>
-    <button mat-raised-button color="primary" type="button" (click)="onDiscard()">Discard</button>
-    <button mat-raised-button color="warning" type="button" (click)="onDelete()" [disabled]="!deletable">Delete</button>
-  </section>
+  <mat-expansion-panel class="edit-card">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Minerals
+      </mat-panel-title>
+      <mat-panel-description>
+        (optional)
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <section class="details">
+
+      <section class="carbs-column">
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Sodium (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="9000" autocomplete="off"
+            formControlName="sodium">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Calcium (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="calcium">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Potassium (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="potassium">
+        </mat-form-field>
+
+      </section>
+      <mat-divider [vertical]="true"></mat-divider>
+      <section class="fats-column">
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Magnesium (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="magnesium">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Zinc (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="zinc">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="column-item">
+          <mat-label>Iron (mg.)</mat-label>
+          <input type="number" matInput placeholder="ex. 2.10" step="1" min="0" max="99" autocomplete="off"
+            formControlName="iron">
+        </mat-form-field>
+      </section>
+
+    </section>
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="edit-card">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Misc
+      </mat-panel-title>
+      <mat-panel-description>
+        (optional)
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <section>
+      <mat-form-field appearance="fill" class="misc-item">
+        <mat-label>Notes</mat-label>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+    </section>
+    <mat-divider></mat-divider>
+    <section>
+      <mat-form-field appearance="fill" class="misc-item">
+        <mat-label>Source</mat-label>
+        <input type="text" matInput formControlName="source">
+      </mat-form-field>
+    </section>
+
+
+  </mat-expansion-panel>
+
+    <button class="save" mat-fab color="primary" type="submit" >
+      <mat-icon aria-label="Save food changes">save</mat-icon></button>
 </form>

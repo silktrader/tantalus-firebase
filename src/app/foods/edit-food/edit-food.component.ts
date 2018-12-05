@@ -25,10 +25,18 @@ export class EditFoodComponent implements OnInit, OnDestroy {
     fats: new FormControl(),
     fibres: new FormControl(),
     sugar: new FormControl(),
+    starch: new FormControl(),
     saturated: new FormControl(),
     trans: new FormControl(),
     cholesterol: new FormControl(),
-    sodium: new FormControl()
+    sodium: new FormControl(),
+    potassium: new FormControl(),
+    calcium: new FormControl(),
+    magnesium: new FormControl(),
+    zinc: new FormControl(),
+    iron: new FormControl(),
+    notes: new FormControl(),
+    source: new FormControl(),
   });
 
   public food: Food | undefined;
@@ -89,10 +97,6 @@ export class EditFoodComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  onDiscard() {
-    this.ui.goBack();
   }
 
   public get editable() {

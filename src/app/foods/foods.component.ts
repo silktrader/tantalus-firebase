@@ -26,7 +26,7 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private readonly desktopColumnSets = new Map<string, Array<FoodProp>>([
     ['Overview', [FoodProp.detailsPercentage, FoodProp.proteins, FoodProp.carbs, FoodProp.fats, FoodProp.calories]],
-    ['Carbohydrates', [FoodProp.carbs, FoodProp.fibres, FoodProp.sugar, FoodProp.carbsPercentage]],
+    ['Carbohydrates', [FoodProp.carbs, FoodProp.starch, FoodProp.fibres, FoodProp.sugar, FoodProp.carbsPercentage]],
     ['Fats', [FoodProp.fats, FoodProp.saturated, FoodProp.trans, FoodProp.cholesterol, FoodProp.fatPercentage]],
     ['Minerals', [FoodProp.sodium, FoodProp.potassium, FoodProp.magnesium, FoodProp.iron, FoodProp.zinc, FoodProp.calcium]]
   ]);
@@ -39,6 +39,7 @@ export class FoodsComponent implements OnInit, OnDestroy, AfterViewInit {
     [FoodProp.fats, 'Fats'],
     [FoodProp.fibres, 'Fibres'],
     [FoodProp.sugar, 'Sugar'],
+    [FoodProp.starch, 'Starch'],
     [FoodProp.carbsPercentage, 'Calories %'],
     [FoodProp.fatPercentage, 'Calories %'],
     [FoodProp.proteinsPercentage, 'Calories %'],

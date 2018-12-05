@@ -13,12 +13,19 @@ export class FoodData {
 
     public readonly fibres?: number;
     public readonly sugar?: number;
+    public readonly starch?: number;
 
     public readonly saturated?: number;
     public readonly trans?: number;
     public readonly cholesterol?: number;
 
     public readonly sodium?: number;
+    public readonly potassium?: number;
+    public readonly calcium?: number;
+    public readonly magnesium?: number;
+
+    public readonly zinc?: number;
+    public readonly iron?: number;
 }
 
 export enum FoodProp {
@@ -29,14 +36,15 @@ export enum FoodProp {
     fats = 'fats',
     fibres = 'fibres',
     sugar = 'sugar',
+    starch = 'starch',
     saturated = 'saturated',
     trans = 'trans',
     cholesterol = 'cholesterol',
     sodium = 'sodium',
-    potassium = 'potassium',
     calcium = 'calcium',
-    zinc = 'zinc',
+    potassium = 'potassium',
     magnesium = 'magnesium',
+    zinc = 'zinc',
     iron = 'iron',
     fatPercentage = 'fatsPercentage',
     carbsPercentage = 'carbsPercentage',
